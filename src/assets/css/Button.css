@@ -1,0 +1,55 @@
+button {
+    cursor: pointer;
+}
+
+.fl-button {
+    @apply px-4 py-2 rounded-lg font-semibold transition duration-200;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed text-white;
+
+    &.fl-button-secondary {
+        @apply border border-gray-300 text-black;
+        @apply hover:bg-gray-400 hover:text-white transition;
+    }
+    &.fl-button-primary {
+        @apply bg-indigo-500 text-white hover:bg-indigo-700;
+    }
+
+    &.fl-active {
+        @apply bg-indigo-500 text-white;
+    }
+}
+
+.ai-btn {
+    @apply px-4 py-2 rounded-lg font-semibold transition duration-200 flex items-center justify-center gap-2;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.ai-btn-contained {
+    &.ai-btn-primary {
+        @apply bg-primary text-white hover:bg-primary-hover;
+    }
+
+    &.ai-btn-secondary {
+        @apply bg-secondary text-white hover:bg-secondary-hover;
+    }
+}
+
+.ai-btn-outline {
+    &.ai-btn-primary {
+        @apply border border-primary text-primary hover:bg-primary hover:text-white;
+    }
+
+    &.ai-btn-secondary {
+        @apply border border-secondary text-secondary hover:bg-secondary hover:text-white;
+    }
+}
+
+.ai-btn-text {
+    &.ai-btn-primary {
+        @apply text-primary hover:text-white hover:bg-primary-light;
+    }
+
+    &.ai-btn-secondary {
+        @apply text-secondary hover:text-white hover:bg-secondary-light;
+    }
+}
