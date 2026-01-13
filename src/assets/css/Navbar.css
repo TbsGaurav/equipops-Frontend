@@ -1,0 +1,7 @@
+.fl-nav{
+    @apply flex gap-2 items-center px-2 py-2 ;   
+}
+
+.fl-nav-actions{
+    @apply bg-slate-300 rounded-full flex space-x-1 items-center p-1;
+}

@@ -1,0 +1,10 @@
+dist
+node_modules
+build
+coverage
+
+* text=auto
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.css text eol=lf

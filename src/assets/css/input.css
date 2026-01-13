@@ -1,0 +1,27 @@
+.fl-input {
+    @apply w-full outline-none rounded-lg transition duration-200;
+    @apply border border-gray-300;
+    @apply focus:border-transparent focus:ring-1 focus:ring-blue-500;
+
+    &.fl-input-error {
+        @apply focus:ring-red-500;
+    }
+}
+
+.fl-input-group {
+    @apply flex items-center w-full px-1 rounded-lg transition duration-200;
+    @apply has-[input:focus-within]:ring-1 has-[input:focus-within]:ring-blue-500;
+    @apply border border-gray-300 has-[input:focus-within]:border-transparent;
+
+    &.fl-input-error {
+        @apply has-[input:focus-within]:ring-red-500;
+    }
+}
+
+.fl-input-group .fl-input {
+    @apply border-0 focus:ring-0 focus:border-0;
+}
+
+.fl-input-error {
+    @apply text-red-500 border-red-500;
+}

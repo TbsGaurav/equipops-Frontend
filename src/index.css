@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+    --color-dark: #eb5098;
+    --color-dark-light: #eb5098;
+
+    --color-primary: #6366f1; /* indigo-500 */
+    --color-primary-light: #818cf8; /* indigo-400 */
+    --color-primary-dark: #4f46e5; /* indigo-600 */
+    --color-primary-hover: #4338ca; /* indigo-700 */
+
+    --color-secondary: #a78bfa; /* violet-400 */
+    --color-secondary-light: #c4b5fd; /* violet-300 */
+    --color-secondary-dark: #8b5cf6; /* violet-500 */
+    --color-secondary-hover: #7c3aed; /* violet-600 */
+
+    --color-success: #22c55e; /* green-500 */
+    --color-success-light: #4ade80; /* green-400 */
+    --color-success-dark: #15803d; /* green-700 */
+    --color-success-hover: #16a34a; /* green-600 */
+
+    --color-error: #ef4444; /* red-500 */
+    --color-error-light: #f87171; /* red-400 */
+    --color-error-dark: #b91c1c; /* red-700 */
+    --color-error-hover: #dc2626; /* red-600 */
+}
+
+@layer base {
+    html {
+        @apply dark:bg-slate-700;
+    }
+
+    ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-gray-400 rounded;
+    }
+}
+
+@layer components {
+    @import './assets/css/input.css';
+    @import './assets/css/Navbar.css';
+    @import './assets/css/Button.css';
+    @import './assets/css/Common.css';
+}
