@@ -33,7 +33,7 @@ import OrgListByStatus from '@/views/Organization/OrgListByStatus';
 import JobApplicationForm from '@/views/JobApplicationForm';
 import Equipment from '@/views/Equipment';
 import EquipmentForm from '@/views/Equipment/EquipmentForm';
-
+import EquipmentDetails from '@/views/Equipment/EquipmentDetails';
 const ProtectedRoutes = [
     {
         element: (
@@ -131,8 +131,9 @@ const ProtectedRoutes = [
                 path: 'equipment',
                 children: [
                     { path: '', element: <Equipment /> },
-                    { path: 'create', element: <EquipmentForm /> }
-                    // { path: 'edit/:equipmentId', element: <EquipmentForm /> }
+                    { path: 'create', element: <EquipmentForm /> },
+                    { path: 'edit/:id', element: <EquipmentForm /> },
+                    { path: '/equipment/view/:id', element: <EquipmentDetails /> }
                 ]
             },
             {
