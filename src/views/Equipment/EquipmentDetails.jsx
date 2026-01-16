@@ -27,11 +27,15 @@ const EquipmentDetails = () => {
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['equipment-details', id],
-        queryFn: () => EquipmentByIdApi(id),
+        queryFn: async () => {
+            const res = await EquipmentByIdApi(id);
+            return res ?? null; // never undefined
+        },
         enabled: !!id
     });
 
     const eq = data?.data;
+    console.log('Equipment Details Data:', eq);
 
     if (isLoading) {
         return (
@@ -51,9 +55,9 @@ const EquipmentDetails = () => {
 
     const purchaseDate = eq.PurchaseDate || eq.purchaseDate ? new Date(eq.PurchaseDate || eq.purchaseDate).toLocaleDateString() : '-';
 
-    const statusValue = eq.Status ?? eq.status;
-    const orgId = eq.OrganizationId ?? eq.organizationId;
-    const catId = eq.CategoryId ?? eq.categoryId;
+    const statusValue = eq.Status;
+    const orgId = eq.OrganizationId;
+    const catId = eq.CategoryId;
 
     return (
         <div className="flex-1 flex items-center justify-center rounded-xl bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 px-4 py-8">
@@ -64,7 +68,7 @@ const EquipmentDetails = () => {
 
                 <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 flex flex-col gap-5">
                     <Grid>
-                        <Field label="Equipment ID" value={eq.EquipmentId ?? eq.equipmentId ?? '-'} />
+                        <Field label="Equipment ID" value={eq.EquipmentId || '-'} />
                         <Field label="Organization" value={ORG_MAP[orgId] || orgId || '-'} />
                     </Grid>
 
@@ -74,13 +78,13 @@ const EquipmentDetails = () => {
                     </Grid>
 
                     <Grid>
-                        <Field label="Equipment Name" value={eq.Name ?? eq.name ?? '-'} />
-                        <Field label="Type" value={eq.Type ?? eq.type ?? '-'} />
+                        <Field label="Equipment Name" value={eq.Name || '-'} />
+                        <Field label="Type" value={eq.Type || '-'} />
                     </Grid>
 
                     <Grid>
-                        <Field label="Location" value={eq.Location ?? eq.location ?? '-'} />
-                        <Field label="QR Code" value={eq.QrCode ?? eq.qrCode ?? '-'} />
+                        <Field label="Location" value={eq.Location || '-'} />
+                        <Field label="QR Code" value={eq.QrCode || '-'} />
                     </Grid>
 
                     <Grid>
@@ -95,6 +99,7 @@ const EquipmentDetails = () => {
                         >
                             <FiArrowLeft /> Back
                         </button>
+
                         <Button onClick={() => navigate(`/equipment/edit/${id}`)}>
                             <FiEdit /> Edit
                         </Button>
@@ -116,7 +121,8 @@ const Field = ({ label, value }) => (
     </div>
 );
 
-/* ===== PropTypes Fix ===== */
+/* ===== PropTypes ===== */
+
 Grid.propTypes = {
     children: PropTypes.node
 };

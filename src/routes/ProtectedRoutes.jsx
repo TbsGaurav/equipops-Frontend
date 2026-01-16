@@ -34,6 +34,9 @@ import JobApplicationForm from '@/views/JobApplicationForm';
 import Equipment from '@/views/Equipment';
 import EquipmentForm from '@/views/Equipment/EquipmentForm';
 import EquipmentDetails from '@/views/Equipment/EquipmentDetails';
+import DashboardCategoryIndex from '@/views/DashboardCategory/DashboardCategoryIndex';
+import DashboardCategoryForm from '@/views/DashboardCategory/DashboardCategoryForm';
+import DashboardCategoryDetails from '@/views/DashboardCategory/DashboardCategoryDetails';
 const ProtectedRoutes = [
     {
         element: (
@@ -136,6 +139,16 @@ const ProtectedRoutes = [
                     { path: '/equipment/view/:id', element: <EquipmentDetails /> }
                 ]
             },
+            {
+                path: 'dashboard-category',
+                children: [
+                    { path: '', element: <DashboardCategoryIndex /> },
+                    { path: 'create', element: <DashboardCategoryForm /> },
+                    { path: 'edit/:id', element: <DashboardCategoryForm /> },
+                    { path: 'view/:id', element: <DashboardCategoryDetails /> }
+                ]
+            },
+
             {
                 path: 'organization/:orgId/users',
                 element: <OrganizationDetails />

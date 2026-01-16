@@ -11,6 +11,7 @@ import {
     LuPanelLeft,
     LuListChecks
 } from 'react-icons/lu';
+import { FiLayers } from 'react-icons/fi';
 
 export const CardBgColors = [
     'bg-teal-200/50',
@@ -48,7 +49,9 @@ export const SideList = [
     { title: 'EmailTemplate', key: 'email_template', value: 'email-template', Icon: LuMailPlus, module: 'EMAILTEMPLATE' },
     { title: 'MenuType', key: 'menu_type', value: 'menu-type', Icon: LuPanelLeft },
     { title: 'MenuPermission', key: 'menu_permission', value: 'menu-permission', Icon: LuListChecks },
-    { title: 'Equipment', key: 'equipment', value: 'equipment', Icon: LuListChecks, module: 'EQUIPMENT' }
+    { title: 'Equipment', key: 'EQUIPMENT', value: 'equipment', Icon: LuListChecks, module: 'EQUIPMENT' },
+    { title: 'Dashboard Category', key: 'DASHBOARD CATEGORY', value: 'dashboard-category', Icon: FiLayers, module: 'DASHBOARD_CATEGORY' }
+
     // { key: 'subscription', value: 'subscription', Icon: LuCrown }
     // { key: 'profile', value: 'profile', Icon: LuUser },
     // { key: 'logout', value: 'logout', Icon: LuLogOut }
