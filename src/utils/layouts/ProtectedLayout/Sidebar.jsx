@@ -16,7 +16,14 @@ const Sidebar = ({ open }) => {
     // const topItems = SideList;
     // const bottomItems = SideList.slice(4);
     let permissions = useSelector((state) => state.user.permissions);
-    permissions = [...permissions, 'EQUIPMENT_VIEW'];
+    permissions = [
+        ...permissions,
+        'EQUIPMENT_VIEW',
+        'VENDOR_VIEW',
+        'EQUIPMENTCATEGORY_VIEW',
+        'EQUIPMENTFAILURE_VIEW',
+        'EQUIPMENTSUBPART_VIEW'
+    ];
 
     const allowedMenus = SideList.filter((item) => canView(permissions, item.module));
 

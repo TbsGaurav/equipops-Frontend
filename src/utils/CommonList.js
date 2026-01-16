@@ -48,7 +48,11 @@ export const SideList = [
     { title: 'EmailTemplate', key: 'email_template', value: 'email-template', Icon: LuMailPlus, module: 'EMAILTEMPLATE' },
     { title: 'MenuType', key: 'menu_type', value: 'menu-type', Icon: LuPanelLeft },
     { title: 'MenuPermission', key: 'menu_permission', value: 'menu-permission', Icon: LuListChecks },
-    { title: 'Equipment', key: 'equipment', value: 'equipment', Icon: LuListChecks, module: 'EQUIPMENT' }
+    { title: 'Equipment', key: 'equipment', value: 'equipment', Icon: LuListChecks, module: 'EQUIPMENT' },
+    { title: 'Vendor', key: 'vendor', value: 'vendor', Icon: LuListChecks, module: 'VENDOR' },
+    { title: 'equipmentcategory', key: 'equipmentcategory', value: 'equipmentcategory', Icon: LuListChecks, module: 'EQUIPMENTCATEGORY' },
+    { title: 'equipmentfailure', key: 'equipmentfailure', value: 'equipmentfailure', Icon: LuListChecks, module: 'EQUIPMENTFAILURE' },
+    { title: 'equipmentsubpart', key: 'equipmentsubpart', value: 'equipmentsubpart', Icon: LuListChecks, module: 'EQUIPMENTSUBPART' }
     // { key: 'subscription', value: 'subscription', Icon: LuCrown }
     // { key: 'profile', value: 'profile', Icon: LuUser },
     // { key: 'logout', value: 'logout', Icon: LuLogOut }

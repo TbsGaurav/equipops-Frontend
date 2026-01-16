@@ -33,6 +33,14 @@ import OrgListByStatus from '@/views/Organization/OrgListByStatus';
 import JobApplicationForm from '@/views/JobApplicationForm';
 import Equipment from '@/views/Equipment';
 import EquipmentForm from '@/views/Equipment/EquipmentForm';
+import Vendor from '@/views/Vendor';
+import EquipmentCategory from '@/views/EquipmentCategory';
+import EquipmentCategoryForm from '@/views/EquipmentCategory/EquipmentCategoryForm';
+import VendorForm from '@/views/Vendor/VendorForm';
+import EquipmentFailure from '@/views/EquipmentFailure';
+import EquipmentFailureForm from '@/views/EquipmentFailure/EquipmentFailureForm';
+import EquipmentSubpart from '@/views/EquipmentSubpart';
+import EquipmentSubpartForm from '@/views/EquipmentSubpart/EquipmentSubpartForm';
 
 const ProtectedRoutes = [
     {
@@ -133,6 +141,38 @@ const ProtectedRoutes = [
                     { path: '', element: <Equipment /> },
                     { path: 'create', element: <EquipmentForm /> }
                     // { path: 'edit/:equipmentId', element: <EquipmentForm /> }
+                ]
+            },
+            {
+                path: 'vendor',
+                children: [
+                    { path: '', element: <Vendor /> },
+                    { path: 'create', element: <VendorForm /> },
+                    { path: 'edit/:vendor_id', element: <VendorForm /> }
+                ]
+            },
+            {
+                path: 'equipmentcategory',
+                children: [
+                    { path: '', element: <EquipmentCategory /> },
+                    { path: 'create', element: <EquipmentCategoryForm /> },
+                    { path: 'edit/:category_id', element: <EquipmentCategoryForm /> }
+                ]
+            },
+            {
+                path: 'equipmentfailure',
+                children: [
+                    { path: '', element: <EquipmentFailure /> },
+                    { path: 'create', element: <EquipmentFailureForm /> },
+                    { path: 'edit/:failure_id', element: <EquipmentFailureForm /> }
+                ]
+            },
+            {
+                path: 'equipmentsubpart',
+                children: [
+                    { path: '', element: <EquipmentSubpart /> },
+                    { path: 'create', element: <EquipmentSubpartForm /> },
+                    { path: 'edit/:subpart_id', element: <EquipmentSubpartForm /> }
                 ]
             },
             {
