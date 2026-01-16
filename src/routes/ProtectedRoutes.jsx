@@ -41,7 +41,7 @@ import EquipmentFailure from '@/views/EquipmentFailure';
 import EquipmentFailureForm from '@/views/EquipmentFailure/EquipmentFailureForm';
 import EquipmentSubpart from '@/views/EquipmentSubpart';
 import EquipmentSubpartForm from '@/views/EquipmentSubpart/EquipmentSubpartForm';
-
+import EquipmentDetails from '@/views/Equipment/EquipmentDetails';
 const ProtectedRoutes = [
     {
         element: (
@@ -139,8 +139,9 @@ const ProtectedRoutes = [
                 path: 'equipment',
                 children: [
                     { path: '', element: <Equipment /> },
-                    { path: 'create', element: <EquipmentForm /> }
-                    // { path: 'edit/:equipmentId', element: <EquipmentForm /> }
+                    { path: 'create', element: <EquipmentForm /> },
+                    { path: 'edit/:id', element: <EquipmentForm /> },
+                    { path: '/equipment/view/:id', element: <EquipmentDetails /> }
                 ]
             },
             {

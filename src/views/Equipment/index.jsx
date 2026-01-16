@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiEye } from 'react-icons/fi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { RotatingLines } from 'react-loader-spinner';
 
@@ -10,10 +10,20 @@ import DeleteAlertDialog from '@/utils/components/ui/DeleteAlertDialog';
 import Toast from '@/utils/toast';
 
 import { EquipmentApiUrl, EquipmentDeleteApi } from '@/api/EquipmentApi';
-
-import { useSelector } from 'react-redux';
-import { canDelete, canUpdate } from '@/utils/Utils';
 import { useNavigate } from 'react-router';
+
+/* ===== Hardcode (temporary) ===== */
+const CATEGORY_MAP = {
+    1: 'MRI Machines',
+    2: 'CT Scanners',
+    3: 'X-Ray Machines',
+    4: 'Ventilators',
+    5: 'Ultrasound Machines'
+};
+
+const ORG_MAP = {
+    1: 'FTP Solution'
+};
 
 const Equipment = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -22,9 +32,7 @@ const Equipment = () => {
     const [orderDirection, setOrderDirection] = useState('ASC');
     const [showDeleteDialog, setShowDeleteDialog] = useState(null);
 
-    const permissions = useSelector((state) => state.user.permissions);
     const navigate = useNavigate();
-
     const itemsPerPage = 10;
 
     const params = {
@@ -41,12 +49,7 @@ const Equipment = () => {
         keepPreviousData: true
     });
 
-    // useEffect(() => {
-    //     console.log(EquipmentApiUrl());
-    // }, []);
-
     const equipments = data?.data?.equipmentData || [];
-    console.log(data + 'eeeee');
     const totalCount = data?.data?.totalNumbers || 0;
     const totalPages = Math.ceil(totalCount / itemsPerPage);
 
@@ -57,7 +60,7 @@ const Equipment = () => {
 
     const handleEdit = (e, eq) => {
         e.stopPropagation();
-        navigate(`/equipment/edit/${eq.equipmentId}`);
+        navigate(`/equipment/edit/${eq.EquipmentId}`);
     };
 
     const deleteMutation = useMutation({
@@ -73,7 +76,7 @@ const Equipment = () => {
     });
 
     const handleDelete = () => {
-        deleteMutation.mutate({ equipmentId: showDeleteDialog.equipmentId });
+        deleteMutation.mutate(showDeleteDialog.EquipmentId);
     };
 
     return (
@@ -88,8 +91,7 @@ const Equipment = () => {
 
                     <div className="flex gap-2 items-center">
                         <span className="px-3 py-1 text-xs rounded-full bg-gray-100">{totalCount} total equipments</span>
-
-                        {<Button onClick={handleCreate}>+ Create Equipment</Button>}
+                        <Button onClick={handleCreate}>+ Create Equipment</Button>
                     </div>
                 </div>
 
@@ -113,6 +115,8 @@ const Equipment = () => {
                     <table className="w-full text-sm">
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
+                                <th className="p-3 text-left font-semibold">Organization</th>
+                                <th className="p-3 text-left font-semibold">Category</th>
                                 <th
                                     onClick={() => {
                                         setOrderColumn('name');
@@ -133,47 +137,45 @@ const Equipment = () => {
                         <tbody>
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan={6} className="p-8 text-center">
+                                    <td colSpan={8} className="p-8 text-center">
                                         <RotatingLines width="24" strokeWidth="5" />
                                     </td>
                                 </tr>
                             ) : equipments.length > 0 ? (
                                 equipments.map((eq) => (
-                                    <tr key={eq.equipmentId} className="border-b hover:bg-gray-50">
-                                        <td className="p-3 font-medium">{eq.name}</td>
-                                        <td className="p-3">{eq.type ?? '-'}</td>
-                                        <td className="p-3">{eq.location ?? '-'}</td>
-                                        <td className="p-3">{eq.purchaseDate ? new Date(eq.purchaseDate).toLocaleDateString() : '-'}</td>
+                                    <tr key={eq.EquipmentId} className="border-b hover:bg-gray-50">
+                                        <td className="p-3">{ORG_MAP[eq.OrganizationId] || eq.OrganizationId || '-'}</td>
+                                        <td className="p-3">{CATEGORY_MAP[eq.CategoryId] || eq.CategoryId || '-'}</td>
+                                        <td className="p-3 font-medium">{eq.Name}</td>
+                                        <td className="p-3">{eq.Type ?? '-'}</td>
+                                        <td className="p-3">{eq.Location ?? '-'}</td>
+                                        <td className="p-3">{eq.PurchaseDate ? new Date(eq.PurchaseDate).toLocaleDateString() : '-'}</td>
                                         <td className="p-3">
                                             <span
                                                 className={`px-2 py-1 text-xs rounded-full ${
-                                                    eq.status === 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                                    eq.Status === 1 || eq.Status === '1'
+                                                        ? 'bg-green-100 text-green-700'
+                                                        : 'bg-red-100 text-red-700'
                                                 }`}
                                             >
-                                                {eq.status === 1 ? 'Active' : 'Inactive'}
+                                                {eq.Status === 1 || eq.Status === '1' ? 'Active' : 'Inactive'}
                                             </span>
                                         </td>
                                         <td className="p-3 text-center">
                                             <div className="flex items-center justify-center gap-3">
-                                                {canUpdate(permissions, 'EQUIPMENT') && (
-                                                    <FiEdit
-                                                        className="cursor-pointer text-primary-dark"
-                                                        onClick={(e) => handleEdit(e, eq)}
-                                                    />
-                                                )}
-                                                {canDelete(permissions, 'EQUIPMENT') && (
-                                                    <FiTrash2
-                                                        className="cursor-pointer text-error"
-                                                        onClick={() => setShowDeleteDialog(eq)}
-                                                    />
-                                                )}
+                                                <FiEye
+                                                    className="cursor-pointer text-blue-600"
+                                                    onClick={() => navigate(`/equipment/view/${eq.EquipmentId}`)}
+                                                />
+                                                <FiEdit className="cursor-pointer text-primary-dark" onClick={(e) => handleEdit(e, eq)} />
+                                                <FiTrash2 className="cursor-pointer text-error" onClick={() => setShowDeleteDialog(eq)} />
                                             </div>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={6} className="p-10 text-center text-gray-500">
+                                    <td colSpan={8} className="p-10 text-center text-gray-500">
                                         No equipments found
                                     </td>
                                 </tr>
@@ -210,7 +212,7 @@ const Equipment = () => {
             </div>
 
             <DeleteAlertDialog
-                itemName={showDeleteDialog?.name}
+                itemName={showDeleteDialog?.Name}
                 isOpen={Boolean(showDeleteDialog)}
                 onCancel={() => setShowDeleteDialog(null)}
                 onConfirm={handleDelete}

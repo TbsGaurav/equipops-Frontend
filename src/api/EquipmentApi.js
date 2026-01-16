@@ -1,5 +1,6 @@
 import ApiService from '@/utils/services/ApiService';
 import axios from 'axios';
+const env = import.meta.env;
 
 /****************************************************************************************************************
  *                                                Equipment                                                      *
@@ -9,22 +10,23 @@ export const EquipmentListApi = async (data) => {
     return await ApiService.get('/equipment/Equipment/list', data, { authorization: true });
 };
 
-export const EquipmentByIdApi = async (data) => {
-    return await ApiService.get('/equipment/Equipment/get-by-id', data, { authorization: true });
-};
+// export const EquipmentByIdApi = async (data) => {
+//     return await ApiService.get('/equipment/Equipment/get-by-id', data, { authorization: true });
+// };
 
 // export const EquipmentUpsertApi = async (data) => {
 //     return await ApiService.post('/equipment/Equipment/create-update', data, { authorization: true });
 // };
 
-export const EquipmentDeleteApi = async (data) => {
-    return await ApiService.post('/equipment/Equipment/delete', data, { authorization: true });
-};
+// export const EquipmentDeleteApi = async (data) => {
+//     return await ApiService.post('/equipment/Equipment/delete', data, { authorization: true });
+// };
 
 export const EquipmentApiUrl = async (params) => {
     try {
+        console.log(env.VITE_TEMP_API_URL);
         const response = await axios.get(
-            'https://localhost:7013/api/Equipment/list',
+            env.VITE_TEMP_API_URL + '/Equipment/list',
             { params } // ✅ query params
         );
         //   console.log(response.data);
@@ -36,20 +38,41 @@ export const EquipmentApiUrl = async (params) => {
     }
 };
 
-export const EquipmentUpsertApi = async (params) => {
+export const EquipmentUpsertApi = async (payload) => {
+    return await axios.post(
+        env.VITE_TEMP_API_URL + '/Equipment/create-update',
+        payload, // 👈 send as body, not inside params
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+    );
+};
+
+export const EquipmentByIdApi = async (id) => {
     try {
-        const response = await axios.post(
-            'https://localhost:7013/api/Equipment/createupdate',
-            { params } // ✅ query params
-        );
-        //   console.log(response.data);
-        // response.data.data === { totalNumbers, equipmentData }FFF
-        return response.data; // ✅ RETURN PROMISE RESULT
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/Equipment/get-by-id', {
+            params: { id } // correct way
+        });
+        return response.data;
     } catch (error) {
         console.error('There was an error!', error);
         throw error;
     }
 };
+export const EquipmentDeleteApi = async (EquipmentId) => {
+    try {
+        const res = await axios.post(env.VITE_TEMP_API_URL + '/Equipment/delete', null, {
+            params: { EquipmentId } // must match name exactly
+        });
+        return res.data;
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+};
+
 /****************************************************************************************************************
  *                                            Equipment Settings                                                 *
  ****************************************************************************************************************/
