@@ -9,7 +9,12 @@ import {
     LuCrown,
     LuMailPlus,
     LuPanelLeft,
-    LuListChecks
+    LuListChecks,
+    LuLayers,
+    LuTriangleAlert,
+    LuPuzzle,
+    LuHistory,
+    LuKey
 } from 'react-icons/lu';
 
 export const CardBgColors = [
@@ -49,10 +54,12 @@ export const SideList = [
     { title: 'MenuType', key: 'menu_type', value: 'menu-type', Icon: LuPanelLeft },
     { title: 'MenuPermission', key: 'menu_permission', value: 'menu-permission', Icon: LuListChecks },
     { title: 'Equipment', key: 'equipment', value: 'equipment', Icon: LuListChecks, module: 'EQUIPMENT' },
-    { title: 'Vendor', key: 'vendor', value: 'vendor', Icon: LuListChecks, module: 'VENDOR' },
-    { title: 'equipmentcategory', key: 'equipmentcategory', value: 'equipmentcategory', Icon: LuListChecks, module: 'EQUIPMENTCATEGORY' },
-    { title: 'equipmentfailure', key: 'equipmentfailure', value: 'equipmentfailure', Icon: LuListChecks, module: 'EQUIPMENTFAILURE' },
-    { title: 'equipmentsubpart', key: 'equipmentsubpart', value: 'equipmentsubpart', Icon: LuListChecks, module: 'EQUIPMENTSUBPART' }
+    { title: 'Equipment Category', key: 'Equipment Category', value: 'equipmentcategory', Icon: LuLayers, module: 'EQUIPMENTCATEGORY' },
+    { title: 'Equipment Failure', key: 'Equipment Failure', value: 'equipmentfailure', Icon: LuTriangleAlert, module: 'EQUIPMENTFAILURE' },
+    { title: 'Equipment Subpart', key: 'Equipment Subpart', value: 'equipmentsubpart', Icon: LuPuzzle, module: 'EQUIPMENTSUBPART' },
+    { title: 'Vendor', key: 'Vendor', value: 'vendor', Icon: LuUsers, module: 'VENDOR' },
+    { title: 'Audit Log', key: 'Audit Log', value: 'auditlog', Icon: LuHistory, module: 'AUDITLOG' },
+    { title: 'Permission', key: 'Permission', value: 'permission', Icon: LuKey, module: 'PERMISSION' }
     // { key: 'subscription', value: 'subscription', Icon: LuCrown }
     // { key: 'profile', value: 'profile', Icon: LuUser },
     // { key: 'logout', value: 'logout', Icon: LuLogOut }

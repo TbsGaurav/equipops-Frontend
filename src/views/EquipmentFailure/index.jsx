@@ -71,13 +71,18 @@ const EquipmentFailure = () => {
         <Fragment>
             <div className="flex flex-col gap-6 h-full">
                 {/* HEADER */}
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
-                        <h1 className="text-xl font-semibold">Equipment Failures</h1>
-                        <p className="text-sm text-gray-500">Manage equipment failures</p>
+                        <h1 className="text-xl font-semibold text-gray-900">Equipment Failures</h1>
+                        <p className="text-sm text-gray-500">Manage failures, search, sort and organize them.</p>
                     </div>
 
-                    <Button onClick={handleCreate}>+ Create Failure</Button>
+                    <div className="flex gap-2 items-center">
+                        <span className="px-3 py-1 text-xs rounded-full bg-gray-100">{totalCount} total failures</span>
+                        <Button variant="contained" color="primary" onClick={handleCreate}>
+                            + Create Failure
+                        </Button>
+                    </div>
                 </div>
 
                 {/* SEARCH */}
@@ -97,16 +102,28 @@ const EquipmentFailure = () => {
 
                 {/* TABLE */}
                 <div className="bg-white border rounded-lg overflow-hidden">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-sm table-fixed">
+                        {/* ✅ COLUMN WIDTH FIX */}
+                        <colgroup>
+                            <col className="w-[15%]" /> {/* Failure Type */}
+                            <col className="w-[15%]" /> {/* Equipment Name */}
+                            <col className="w-[12%]" /> {/* Subpart */}
+                            <col className="w-[15%]" /> {/* Organization */}
+                            <col className="w-[18%]" /> {/* Description */}
+                            <col className="w-[10%]" /> {/* Failure Date */}
+                            <col className="w-[8%]" /> {/* Downtime */}
+                            <col className="w-[7%]" /> {/* Actions */}
+                        </colgroup>
+
                         <thead className="bg-gray-50 border-b">
                             <tr>
-                                <th className="p-3">Failure Type</th>
-                                <th className="p-3">Equipment Name</th>
-                                <th className="p-3">Subpart</th>
-                                <th className="p-3">Organization</th>
-                                <th className="p-3">Description</th>
-                                <th className="p-3">Failure Date</th>
-                                <th className="p-3">Downtime (min)</th>
+                                <th className="p-3 text-left">Failure Type</th>
+                                <th className="p-3 text-left">Equipment Name</th>
+                                <th className="p-3 text-left">Subpart</th>
+                                <th className="p-3 text-left">Organization</th>
+                                <th className="p-3 text-left">Description</th>
+                                <th className="p-3 text-left">Failure Date</th>
+                                <th className="p-3 text-left">Downtime (min)</th>
                                 <th className="p-3 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -114,7 +131,7 @@ const EquipmentFailure = () => {
                         <tbody>
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan={7} className="p-8 text-center">
+                                    <td colSpan={8} className="p-8 text-center">
                                         <RotatingLines width="24" />
                                     </td>
                                 </tr>
@@ -125,7 +142,7 @@ const EquipmentFailure = () => {
                                         <td className="p-3">{failure.equipment_name}</td>
                                         <td className="p-3">{failure.subpart_name}</td>
                                         <td className="p-3">{failure.organization_name}</td>
-                                        <td className="p-3">{failure.description}</td>
+                                        <td className="p-3 break-words">{failure.description}</td>
                                         <td className="p-3">{new Date(failure.failure_date).toLocaleString()}</td>
                                         <td className="p-3">{failure.downtime_minutes}</td>
                                         <td className="p-3 text-center">
@@ -141,7 +158,7 @@ const EquipmentFailure = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={7} className="p-8 text-center text-gray-500">
+                                    <td colSpan={8} className="p-8 text-center text-gray-500">
                                         No failures found
                                     </td>
                                 </tr>

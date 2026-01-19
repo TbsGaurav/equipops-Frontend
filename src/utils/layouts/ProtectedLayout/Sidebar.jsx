@@ -22,7 +22,9 @@ const Sidebar = ({ open }) => {
         'VENDOR_VIEW',
         'EQUIPMENTCATEGORY_VIEW',
         'EQUIPMENTFAILURE_VIEW',
-        'EQUIPMENTSUBPART_VIEW'
+        'EQUIPMENTSUBPART_VIEW',
+        'AUDITLOG_VIEW',
+        'PERMISSION_VIEW'
     ];
 
     const allowedMenus = SideList.filter((item) => canView(permissions, item.module));

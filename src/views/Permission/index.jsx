@@ -3,26 +3,22 @@ import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { RotatingLines } from 'react-loader-spinner';
 import { useNavigate } from 'react-router';
-
 import Button from '@/utils/components/ui/Button';
 import InputField from '@/utils/components/ui/InputField';
 import Alert from '@/utils/components/ui/Alert';
 import DeleteAlertDialog from '@/utils/components/ui/DeleteAlertDialog';
 import Toast from '@/utils/toast';
+import { PermissionListApi, PermissionDeleteApi } from '@/api/PermissionApi';
 
-import { EquipmentSubpartListApi, EquipmentSubpartDeleteApi } from '@/api/EquipmentSubpartApi';
-
-const ITEMS_PER_PAGE = 10;
-
-const EquipmentSubpart = () => {
+const Permission = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [statusFilter, setStatusFilter] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [showDeleteDialog, setShowDeleteDialog] = useState(null);
 
     const navigate = useNavigate();
+    const ITEMS_PER_PAGE = 10;
 
-    /* ================= QUERY PARAMS ================= */
     const params = {
         search: searchTerm,
         status: statusFilter === '' ? null : statusFilter === 'true',
@@ -30,67 +26,60 @@ const EquipmentSubpart = () => {
         length: ITEMS_PER_PAGE
     };
 
-    /* ================= FETCH ================= */
     const { data, isLoading, isError, error, refetch } = useQuery({
-        queryKey: ['equipment-subparts', currentPage, searchTerm, statusFilter],
-        queryFn: () => EquipmentSubpartListApi(params),
+        queryKey: ['permissions', currentPage, searchTerm, statusFilter],
+        queryFn: () => PermissionListApi(params),
         keepPreviousData: true
     });
 
-    /* ================= DATA ================= */
-    const subparts = data?.value?.data?.subpartData || [];
-    const totalCount = data?.value?.data?.totalNumbers || 0;
+    const permissions = data?.data?.permissionData || [];
+    const totalCount = data?.data?.totalNumbers || 0;
     const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalCount);
 
-    /* ================= ACTIONS ================= */
-    const handleCreate = () => navigate('/EquipmentSubpart/create');
+    const handleCreate = () => navigate('/permission/create');
 
     const handleEdit = (row) => {
-        navigate(`/EquipmentSubpart/edit/${row.subpart_id}`);
+        navigate(`/permission/edit/${row.permission_id}`);
     };
 
-    /* ================= DELETE ================= */
     const deleteMutation = useMutation({
-        mutationFn: EquipmentSubpartDeleteApi,
+        mutationFn: PermissionDeleteApi,
         onSuccess: () => {
-            Toast.success('Subpart deleted successfully');
+            Toast.success('Permission deleted successfully');
             refetch();
             setShowDeleteDialog(null);
         },
         onError: (err) => {
-            Toast.error(err?.response?.data?.message || 'Failed to delete subpart');
+            Toast.error(err?.response?.data?.message || 'Failed to delete permission');
         }
     });
 
     const handleDelete = () => {
-        deleteMutation.mutate({ subpart_id: showDeleteDialog.subpart_id });
+        if (showDeleteDialog) {
+            deleteMutation.mutate({ permission_id: showDeleteDialog.permission_id });
+        }
     };
 
     return (
         <Fragment>
             <div className="flex flex-col gap-6 h-full">
-                {/* HEADER */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                {/* Header */}
+                <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-xl font-semibold text-gray-900">Equipment Subpart</h1>
-                        <p className="text-sm text-gray-500">Manage subparts, search, sort and organize them.</p>
+                        <h1 className="text-xl font-semibold">Permissions</h1>
+                        <p className="text-sm text-gray-500">Manage system permissions</p>
                     </div>
 
-                    <div className="flex gap-2 items-center">
-                        <span className="px-3 py-1 text-xs rounded-full bg-gray-100">{totalCount} total Subparts</span>
-                        <Button variant="contained" color="primary" onClick={handleCreate}>
-                            + Create Subpart
-                        </Button>
-                    </div>
+                    <Button onClick={handleCreate}>+ Create Permission</Button>
                 </div>
 
                 {/* SEARCH */}
                 <div className="bg-white border rounded-lg p-4 flex gap-4">
                     <InputField
-                        placeholder="Search subpart"
+                        placeholder="Search permission"
                         value={searchTerm}
                         onChange={(e) => {
                             setSearchTerm(e.target.value);
@@ -112,30 +101,25 @@ const EquipmentSubpart = () => {
                     </select>
                 </div>
 
-                {/* ERROR */}
-                {isError && <Alert.Error>{error?.message || 'Failed to load subparts'}</Alert.Error>}
+                {isError && <Alert.Error>{error?.message}</Alert.Error>}
 
                 {/* TABLE */}
                 <div className="bg-white border rounded-lg overflow-hidden">
                     <table className="w-full text-sm table-fixed">
                         {/* ✅ COLUMN WIDTH FIX */}
                         <colgroup>
-                            <col className="w-[18%]" /> {/* Equipment */}
-                            <col className="w-[18%]" /> {/* Subpart Name */}
+                            <col className="w-[18%]" /> {/* Permission Code */}
                             <col className="w-[22%]" /> {/* Description */}
                             <col className="w-[10%]" /> {/* Status */}
-                            <col className="w-[12%]" /> {/* QR Code */}
                             <col className="w-[12%]" /> {/* Created At */}
                             <col className="w-[8%]" /> {/* Actions */}
                         </colgroup>
 
                         <thead className="bg-gray-50 border-b">
                             <tr>
-                                <th className="p-3 text-left">Equipment</th>
-                                <th className="p-3 text-left">Subpart Name</th>
+                                <th className="p-3 text-left">Permission Code</th>
                                 <th className="p-3 text-left">Description</th>
                                 <th className="p-3 text-left">Status</th>
-                                <th className="p-3 text-left">QR Code</th>
                                 <th className="p-3 text-left">Created At</th>
                                 <th className="p-3 text-center">Actions</th>
                             </tr>
@@ -148,22 +132,20 @@ const EquipmentSubpart = () => {
                                         <RotatingLines width="24" />
                                     </td>
                                 </tr>
-                            ) : subparts.length ? (
-                                subparts.map((row) => (
-                                    <tr key={row.subpart_id} className="border-b hover:bg-gray-50">
-                                        <td className="p-3">{row.equipment_name}</td>
-                                        <td className="p-3">{row.subpart_name}</td>
+                            ) : permissions.length ? (
+                                permissions.map((row) => (
+                                    <tr key={row.permission_id} className="border-b hover:bg-gray-50">
+                                        <td className="p-3">{row.permission_code}</td>
                                         <td className="p-3 break-words">{row.description}</td>
                                         <td className="p-3">
                                             <span
                                                 className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                                    row.status ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                                    row.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                                                 }`}
                                             >
-                                                {row.status ? 'Active' : 'Inactive'}
+                                                {row.is_active ? 'Active' : 'Inactive'}
                                             </span>
                                         </td>
-                                        <td className="p-3 break-all">{row.qr_code}</td>
                                         <td className="p-3">{new Date(row.created_at).toLocaleString()}</td>
                                         <td className="p-3 text-center">
                                             <div className="flex justify-center gap-3">
@@ -176,7 +158,7 @@ const EquipmentSubpart = () => {
                             ) : (
                                 <tr>
                                     <td colSpan={7} className="p-8 text-center text-gray-500">
-                                        No subparts found
+                                        No permission found
                                     </td>
                                 </tr>
                             )}
@@ -211,10 +193,9 @@ const EquipmentSubpart = () => {
                 )}
             </div>
 
-            {/* DELETE DIALOG */}
             <DeleteAlertDialog
-                isOpen={Boolean(showDeleteDialog)}
-                itemName={showDeleteDialog?.subpart_name}
+                itemName={showDeleteDialog?.permission_code}
+                isOpen={!!showDeleteDialog}
                 onCancel={() => setShowDeleteDialog(null)}
                 onConfirm={handleDelete}
                 loading={deleteMutation.isPending}
@@ -223,4 +204,4 @@ const EquipmentSubpart = () => {
     );
 };
 
-export default EquipmentSubpart;
+export default Permission;

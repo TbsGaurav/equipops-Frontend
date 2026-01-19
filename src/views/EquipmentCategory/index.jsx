@@ -3,14 +3,12 @@ import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { RotatingLines } from 'react-loader-spinner';
 import { useNavigate } from 'react-router';
-// import { useSelector } from 'react-redux';
 import Button from '@/utils/components/ui/Button';
 import InputField from '@/utils/components/ui/InputField';
 import Alert from '@/utils/components/ui/Alert';
 import DeleteAlertDialog from '@/utils/components/ui/DeleteAlertDialog';
 import Toast from '@/utils/toast';
 import { EquipmentCategoryListApi, EquipmentCategoryDeleteApi } from '@/api/EquipmentCategoryApi';
-// import { canDelete, canUpdate } from '@/utils/Utils';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -22,7 +20,6 @@ const EquipmentCategory = () => {
     const [showDeleteDialog, setShowDeleteDialog] = useState(null);
 
     const navigate = useNavigate();
-    // const permissions = useSelector((state) => state.user.permissions);
 
     /* ================= QUERY PARAMS ================= */
     const params = {
@@ -85,7 +82,6 @@ const EquipmentCategory = () => {
 
                     <div className="flex gap-2 items-center">
                         <span className="px-3 py-1 text-xs rounded-full bg-gray-100">{totalCount} total categories</span>
-
                         <Button onClick={handleCreate}>+ Create Category</Button>
                     </div>
                 </div>
@@ -107,11 +103,20 @@ const EquipmentCategory = () => {
 
                 {/* TABLE */}
                 <div className="bg-white border rounded-lg overflow-hidden">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-sm table-fixed">
+                        {/* ✅ COLUMN WIDTH FIX */}
+                        <colgroup>
+                            <col className="w-[25%]" /> {/* Category Name */}
+                            <col className="w-[15%]" /> {/* Organization */}
+                            <col className="w-[35%]" /> {/* Description */}
+                            <col className="w-[15%]" /> {/* Created */}
+                            <col className="w-[10%]" /> {/* Actions */}
+                        </colgroup>
+
                         <thead className="bg-gray-50 border-b">
                             <tr>
                                 <th
-                                    className="p-3 cursor-pointer"
+                                    className="p-3 cursor-pointer text-left"
                                     onClick={() => {
                                         setOrderColumn('category_name');
                                         setOrderDirection(orderDirection === 'ASC' ? 'DESC' : 'ASC');
@@ -119,10 +124,10 @@ const EquipmentCategory = () => {
                                 >
                                     Category Name {orderColumn === 'category_name' && (orderDirection === 'ASC' ? '↑' : '↓')}
                                 </th>
-                                <th className="p-3">Organization</th>
-                                <th className="p-3">Description</th>
+                                <th className="p-3 text-left">Organization</th>
+                                <th className="p-3 text-left">Description</th>
                                 <th
-                                    className="p-3 cursor-pointer"
+                                    className="p-3 cursor-pointer text-left"
                                     onClick={() => {
                                         setOrderColumn('created_at');
                                         setOrderDirection(orderDirection === 'ASC' ? 'DESC' : 'ASC');
@@ -146,16 +151,12 @@ const EquipmentCategory = () => {
                                     <tr key={cat.category_id} className="border-b hover:bg-gray-50">
                                         <td className="p-3">{cat.category_name}</td>
                                         <td className="p-3">{cat.organization_name || '-'}</td>
-                                        <td className="p-3">{cat.description || '-'}</td>
+                                        <td className="p-3 break-words">{cat.description || '-'}</td>
                                         <td className="p-3">{new Date(cat.created_at).toLocaleDateString()}</td>
                                         <td className="p-3 text-center">
                                             <div className="flex justify-center gap-3">
-                                                {/* {canUpdate(permissions, 'EQUIPMENT_CATEGORY') && ( */}
                                                 <FiEdit className="cursor-pointer text-primary-dark" onClick={(e) => handleEdit(e, cat)} />
-                                                {/* )} */}
-                                                {/* {canDelete(permissions, 'EQUIPMENT_CATEGORY') && ( */}
                                                 <FiTrash2 className="cursor-pointer text-error" onClick={() => setShowDeleteDialog(cat)} />
-                                                {/* )} */}
                                             </div>
                                         </td>
                                     </tr>

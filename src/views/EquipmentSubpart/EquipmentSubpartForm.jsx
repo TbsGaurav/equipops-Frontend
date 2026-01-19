@@ -60,7 +60,7 @@ const EquipmentSubpartForm = () => {
                 equipment_id: subpart.equipment_id,
                 subpart_name: subpart.subpart_name ?? '',
                 description: subpart.description ?? '',
-                status: subpart.status ?? '',
+                status: subpart.status ? 'true' : 'false',
                 qr_code: subpart.qr_code ?? ''
             });
         }
@@ -85,7 +85,7 @@ const EquipmentSubpartForm = () => {
             equipment_id: Number(formData.equipment_id),
             subpart_name: formData.subpart_name,
             description: formData.description,
-            status: formData.status,
+            status: formData.status === 'true',
             qr_code: formData.qr_code
         };
 
@@ -103,6 +103,22 @@ const EquipmentSubpartForm = () => {
             <h1 className="text-xl font-semibold mb-4">{isEdit ? 'Edit Equipment Subpart' : 'Create Equipment Subpart'}</h1>
 
             <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
+                {/* SUBPART NAME */}
+                <div>
+                    <label className="text-sm font-medium">
+                        Subpart Name <span className="text-red-500">*</span>
+                    </label>
+                    <Controller
+                        name="subpart_name"
+                        control={control}
+                        rules={{
+                            required: 'Subpart name is required'
+                        }}
+                        render={({ field }) => <InputField {...field} error={!!errors.subpart_name} placeholder="Enter Subpart name" />}
+                    />
+                    {errors.subpart_name && <p className="text-xs text-red-500">{errors.subpart_name.message}</p>}
+                </div>
+
                 {/* Equipment Dropdown */}
                 <Controller
                     name="equipment_id"
@@ -110,13 +126,17 @@ const EquipmentSubpartForm = () => {
                     rules={{ required: 'Equipment is required' }}
                     render={({ field }) => (
                         <div>
-                            <label className="text-sm font-medium">Equipment *</label>
+                            <label className="text-sm font-medium">
+                                Equipment <span className="text-red-500">*</span>
+                            </label>
                             <select
                                 value={field.value}
                                 onChange={field.onChange}
                                 onBlur={field.onBlur}
                                 disabled={eqLoading}
-                                className="w-full border rounded-md px-3 py-2"
+                                className={`w-full border rounded-md px-3 py-2 ${
+                                    errors.equipment_id ? 'border-red-500' : 'border-gray-300'
+                                }`}
                             >
                                 <option value="">Select Equipment</option>
                                 {equipments.map((equ) => (
@@ -130,17 +150,6 @@ const EquipmentSubpartForm = () => {
                     )}
                 />
 
-                {/* SUBPART NAME */}
-                <div>
-                    <label className="text-sm font-medium">Subpart Name *</label>
-                    <Controller
-                        name="subpart_name"
-                        control={control}
-                        rules={{ required: 'Subpart name is required' }}
-                        render={({ field }) => <InputField {...field} error={!!errors.subpart_name} />}
-                    />
-                </div>
-
                 {/* DESCRIPTION */}
                 <div>
                     <label className="text-sm font-medium">Description</label>
@@ -149,13 +158,27 @@ const EquipmentSubpartForm = () => {
 
                 {/* STATUS */}
                 <div>
-                    <label className="text-sm font-medium">Status *</label>
+                    <label className="text-sm font-medium">
+                        Status <span className="text-red-500">*</span>
+                    </label>
+
                     <Controller
                         name="status"
                         control={control}
                         rules={{ required: 'Status is required' }}
-                        render={({ field }) => <InputField {...field} error={!!errors.status} />}
+                        render={({ field }) => (
+                            <select
+                                {...field}
+                                className={`w-full border rounded-md px-3 py-2 ${errors.status ? 'border-red-500' : 'border-gray-300'}`}
+                            >
+                                <option value="">Select Status</option>
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        )}
                     />
+
+                    {errors.status && <p className="text-xs text-red-500">{errors.status.message}</p>}
                 </div>
 
                 {/* QR CODE */}

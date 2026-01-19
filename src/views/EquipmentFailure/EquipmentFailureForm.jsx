@@ -137,24 +137,38 @@ const EquipmentFailureForm = () => {
             <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
                 {/* FAILURE TYPE */}
                 <div>
-                    <label className="text-sm font-medium">Failure Type *</label>
+                    <label className="text-sm font-medium">
+                        Failure Type <span className="text-red-500">*</span>
+                    </label>
                     <Controller
                         name="failure_type"
                         control={control}
-                        rules={{ required: 'Failure type is required' }}
-                        render={({ field }) => <InputField {...field} error={!!errors.failure_type} />}
+                        rules={{
+                            required: 'Failure Type is required',
+                            maxLength: {
+                                value: 50,
+                                message: 'Failure Type cannot exceed 50 characters'
+                            }
+                        }}
+                        render={({ field }) => <InputField {...field} error={!!errors.failure_type} placeholder="Enter Failure Type" />}
                     />
+                    {errors.failure_type && <p className="text-xs text-red-500">{errors.failure_type.message}</p>}
                 </div>
 
                 {/* FAILURE DATE */}
                 <div>
-                    <label className="text-sm font-medium">Failure Date *</label>
+                    <label className="text-sm font-medium">
+                        Failure Date <span className="text-red-500">*</span>
+                    </label>
                     <Controller
                         name="failure_date"
                         control={control}
-                        rules={{ required: 'Failure date is required' }}
-                        render={({ field }) => <InputField type="datetime-local" {...field} />}
+                        rules={{ required: 'Failure Date is required' }}
+                        render={({ field }) => (
+                            <InputField type="datetime-local" {...field} error={!!errors.failure_date} placeholder="Enter Failure Date" />
+                        )}
                     />
+                    {errors.failure_date && <p className="text-xs text-red-500">{errors.failure_date.message}</p>}
                 </div>
 
                 {/* Organization Dropdown */}
@@ -164,13 +178,17 @@ const EquipmentFailureForm = () => {
                     rules={{ required: 'Organization is required' }}
                     render={({ field }) => (
                         <div>
-                            <label className="text-sm font-medium">Organization *</label>
+                            <label className="text-sm font-medium">
+                                Organization <span className="text-red-500">*</span>
+                            </label>
                             <select
                                 value={field.value}
                                 onChange={field.onChange}
                                 onBlur={field.onBlur}
                                 disabled={orgLoading}
-                                className="w-full border rounded-md px-3 py-2"
+                                className={`w-full border rounded-md px-3 py-2 ${
+                                    errors.organization_id ? 'border-red-500' : 'border-gray-300'
+                                }`}
                             >
                                 <option value="">Select organization</option>
                                 {organizations.map((org) => (
@@ -183,7 +201,6 @@ const EquipmentFailureForm = () => {
                         </div>
                     )}
                 />
-
                 {/* Equipment Dropdown */}
                 <Controller
                     name="equipment_id"
@@ -191,13 +208,17 @@ const EquipmentFailureForm = () => {
                     rules={{ required: 'Equipment is required' }}
                     render={({ field }) => (
                         <div>
-                            <label className="text-sm font-medium">Equipment *</label>
+                            <label className="text-sm font-medium">
+                                Equipment <span className="text-red-500">*</span>
+                            </label>
                             <select
                                 value={field.value}
                                 onChange={field.onChange}
                                 onBlur={field.onBlur}
                                 disabled={eqLoading}
-                                className="w-full border rounded-md px-3 py-2"
+                                className={`w-full border rounded-md px-3 py-2 ${
+                                    errors.equipment_id ? 'border-red-500' : 'border-gray-300'
+                                }`}
                             >
                                 <option value="">Select Equipment</option>
                                 {equipments.map((equ) => (
@@ -215,18 +236,22 @@ const EquipmentFailureForm = () => {
                 <Controller
                     name="subpart_id"
                     control={control}
-                    rules={{ required: 'Equipment is required' }}
+                    rules={{ required: 'Equipment Subpart is required' }}
                     render={({ field }) => (
                         <div>
-                            <label className="text-sm font-medium">Equipment *</label>
+                            <label className="text-sm font-medium">
+                                Equipment Subpart <span className="text-red-500">*</span>
+                            </label>
                             <select
                                 value={field.value}
                                 onChange={field.onChange}
                                 onBlur={field.onBlur}
                                 disabled={eqsubLoading}
-                                className="w-full border rounded-md px-3 py-2"
+                                className={`w-full border rounded-md px-3 py-2 ${
+                                    errors.organization_id ? 'border-red-500' : 'border-gray-300'
+                                }`}
                             >
-                                <option value="">Select EquipmentSubpart</option>
+                                <option value="">Select Equipment Subpart</option>
                                 {equipmentsubparts.map((equsub) => (
                                     <option key={equsub.subpart_id} value={String(equsub.subpart_id)}>
                                         {equsub.name}

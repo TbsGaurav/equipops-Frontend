@@ -36,7 +36,7 @@ const Vendor = () => {
     });
 
     const vendors = data?.value?.data?.vendorData || [];
-    const totalCount = data?.data?.totalNumbers || 0;
+    const totalCount = data?.value?.data?.totalNumbers || 0;
     const totalPages = Math.ceil(totalCount / itemsPerPage);
 
     const startIndex = (currentPage - 1) * itemsPerPage;

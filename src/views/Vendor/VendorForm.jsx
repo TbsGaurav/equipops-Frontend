@@ -101,20 +101,30 @@ const VendorForm = () => {
             <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
                 {/* Vendor Name */}
                 <div>
-                    <label className="text-sm font-medium">Vendor Name *</label>
+                    <label className="text-sm font-medium">
+                        Vendor Name <span className="text-red-500">*</span>
+                    </label>
                     <Controller
                         name="name"
                         control={control}
                         rules={{ required: 'Vendor name is required' }}
-                        render={({ field }) => <InputField {...field} error={!!errors.name} />}
+                        render={({ field }) => <InputField {...field} error={!!errors.name} placeholder="Enter vendor name" />}
                     />
                     {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
                 </div>
 
                 {/* Service Type */}
                 <div>
-                    <label className="text-sm font-medium">Service Type</label>
-                    <Controller name="service_type" control={control} render={({ field }) => <InputField {...field} />} />
+                    <label className="text-sm font-medium">
+                        Service Type <span className="text-red-500">*</span>
+                    </label>
+                    <Controller
+                        name="service_type"
+                        control={control}
+                        rules={{ required: 'Service Type is required' }}
+                        render={({ field }) => <InputField {...field} error={!!errors.name} placeholder="Enter service type" />}
+                    />
+                    {errors.service_type && <p className="text-xs text-red-500">{errors.service_type.message}</p>}
                 </div>
 
                 {/* Organization Dropdown */}
@@ -124,13 +134,17 @@ const VendorForm = () => {
                     rules={{ required: 'Organization is required' }}
                     render={({ field }) => (
                         <div>
-                            <label className="text-sm font-medium">Organization *</label>
+                            <label className="text-sm font-medium">
+                                Organization <span className="text-red-500">*</span>
+                            </label>
                             <select
                                 value={field.value}
                                 onChange={field.onChange}
                                 onBlur={field.onBlur}
                                 disabled={orgLoading}
-                                className="w-full border rounded-md px-3 py-2"
+                                className={`w-full border rounded-md px-3 py-2 ${
+                                    errors.organization_id ? 'border-red-500' : 'border-gray-300'
+                                }`}
                             >
                                 <option value="">Select organization</option>
                                 {organizations.map((org) => (
@@ -147,13 +161,35 @@ const VendorForm = () => {
                 {/* Email */}
                 <div>
                     <label className="text-sm font-medium">Email</label>
-                    <Controller name="email" control={control} render={({ field }) => <InputField {...field} />} />
+                    <Controller
+                        name="email"
+                        control={control}
+                        rules={{
+                            pattern: {
+                                value: /^[^\s@]+@[^\s@]+\.com$/,
+                                message: 'Invalid email address'
+                            }
+                        }}
+                        render={({ field }) => <InputField {...field} placeholder="Enter email" />}
+                    />
+                    {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
                 </div>
 
                 {/* Phone */}
                 <div>
                     <label className="text-sm font-medium">Phone</label>
-                    <Controller name="phone" control={control} render={({ field }) => <InputField {...field} />} />
+                    <Controller
+                        name="phone"
+                        control={control}
+                        rules={{
+                            pattern: {
+                                value: /^[0-9]{10}$/,
+                                message: 'Phone must be 10 digits'
+                            }
+                        }}
+                        render={({ field }) => <InputField {...field} placeholder="Enter phone number" />}
+                    />
+                    {errors.phone && <p className="text-xs text-red-500">{errors.phone.message}</p>}
                 </div>
 
                 {/* Actions */}

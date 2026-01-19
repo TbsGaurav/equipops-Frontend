@@ -42,6 +42,10 @@ import EquipmentFailureForm from '@/views/EquipmentFailure/EquipmentFailureForm'
 import EquipmentSubpart from '@/views/EquipmentSubpart';
 import EquipmentSubpartForm from '@/views/EquipmentSubpart/EquipmentSubpartForm';
 import EquipmentDetails from '@/views/Equipment/EquipmentDetails';
+import AuditLog from '@/views/AuditLog';
+import Permission from '@/views/Permission';
+import PermissionForm from '@/views/Permission/PermissionForm';
+
 const ProtectedRoutes = [
     {
         element: (
@@ -174,6 +178,22 @@ const ProtectedRoutes = [
                     { path: '', element: <EquipmentSubpart /> },
                     { path: 'create', element: <EquipmentSubpartForm /> },
                     { path: 'edit/:subpart_id', element: <EquipmentSubpartForm /> }
+                ]
+            },
+            {
+                path: 'auditlog',
+                children: [
+                    { path: '', element: <AuditLog /> }
+                    // { path: 'create', element: <EquipmentSubpartForm /> },
+                    // { path: 'edit/:subpart_id', element: <EquipmentSubpartForm /> }
+                ]
+            },
+            {
+                path: 'permission',
+                children: [
+                    { path: '', element: <Permission /> },
+                    { path: 'create', element: <PermissionForm /> },
+                    { path: 'edit/:permission_id', element: <PermissionForm /> }
                 ]
             },
             {
