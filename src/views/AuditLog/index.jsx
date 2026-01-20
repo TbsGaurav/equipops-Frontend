@@ -70,15 +70,22 @@ const AuditLog = () => {
                 {/* TABLE */}
                 <div className="bg-white border rounded-lg overflow-hidden">
                     <table className="w-full text-sm">
+                        <colgroup>
+                            <col className="w-[15%]" /> {/* Entity */}
+                            <col className="w-[15%]" /> {/* Action */}
+                            <col className="w-[15%]" /> {/* Entity ID */}
+                            <col className="w-[20%]" /> {/* Old Data */}
+                            <col className="w-[22%]" /> {/* New Data */}
+                        </colgroup>
                         <thead className="bg-gray-50 border-b">
                             <tr>
-                                <th className="p-3">Entity</th>
-                                <th className="p-3">Action</th>
-                                <th className="p-3">Entity ID</th>
-                                <th className="p-3">Old Data</th>
-                                <th className="p-3">New Data</th>
+                                <th className="p-3 text-left">Entity</th>
+                                <th className="p-3 text-left">Action</th>
+                                <th className="p-3 text-left">Entity ID</th>
+                                <th className="p-3 text-left">Old Data</th>
+                                <th className="p-3 text-left">New Data</th>
                                 <th
-                                    className="p-3 cursor-pointer"
+                                    className="p-3 text-left cursor-pointer"
                                     onClick={() => {
                                         setOrderColumn('created_at');
                                         setOrderDirection(orderDirection === 'ASC' ? 'DESC' : 'ASC');
