@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiEye } from 'react-icons/fi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { RotatingLines } from 'react-loader-spinner';
 import { useNavigate } from 'react-router';
@@ -42,6 +42,10 @@ const Permission = () => {
 
     const handleCreate = () => navigate('/permission/create');
     const handleEdit = (row) => navigate(`/permission/edit/${row.permission_id}`);
+    const handleView = (e, row) => {
+        e.stopPropagation();
+        navigate(`/permission/view/${row.permission_id}`);
+    };
 
     const deleteMutation = useMutation({
         mutationFn: PermissionDeleteApi,
@@ -160,6 +164,13 @@ const Permission = () => {
                                             </td>
                                             <td className="px-6 py-4 text-center">
                                                 <div className="flex items-center justify-center gap-3">
+                                                    <button
+                                                        onClick={(e) => handleView(e, row)}
+                                                        className="text-green-600 hover:text-green-800 transition-colors p-1 rounded hover:bg-green-50"
+                                                        title="View permission"
+                                                    >
+                                                        <FiEye size={18} />
+                                                    </button>
                                                     <button
                                                         onClick={() => handleEdit(row)}
                                                         className="text-indigo-600 hover:text-indigo-800 p-1 rounded hover:bg-indigo-50"

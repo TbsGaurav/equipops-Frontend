@@ -198,7 +198,7 @@ const Vendor = () => {
                                                 <div className="flex items-center justify-center gap-3">
                                                     <button
                                                         onClick={(e) => handleView(e, ven)}
-                                                        className="text-emerald-600 hover:text-emerald-800 transition-colors p-1 rounded hover:bg-emerald-50"
+                                                        className="text-green-600 hover:text-green-800 transition-colors p-1 rounded hover:bg-green-50"
                                                         title="View vendor"
                                                     >
                                                         <FiEye size={18} />

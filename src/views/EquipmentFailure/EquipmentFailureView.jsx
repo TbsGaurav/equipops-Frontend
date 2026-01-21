@@ -3,19 +3,19 @@ import { useQuery } from '@tanstack/react-query';
 import { RotatingLines } from 'react-loader-spinner';
 import PropTypes from 'prop-types';
 import Alert from '@/utils/components/ui/Alert';
-import { VendorByIdApi } from '@/api/VendorApi';
+import { EquipmentFailureByIdApi } from '@/api/EquipmentFailureApi';
 
-const VendorView = () => {
-    const { vendor_id } = useParams();
+const EquipmentFailureView = () => {
+    const { failure_id } = useParams();
     const navigate = useNavigate();
 
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ['vendor-by-id', vendor_id],
-        queryFn: () => VendorByIdApi(vendor_id),
-        enabled: !!vendor_id
+        queryKey: ['equipment-failure-by-id', failure_id],
+        queryFn: () => EquipmentFailureByIdApi(failure_id),
+        enabled: !!failure_id
     });
 
-    const vendor = data?.value?.data;
+    const failure = data?.value?.data;
 
     if (isLoading) {
         return (
@@ -26,29 +26,30 @@ const VendorView = () => {
     }
 
     if (isError) {
-        return <Alert.Error className="m-6">{error?.message || 'Failed to load vendor details'}</Alert.Error>;
+        return <Alert.Error className="m-6">{error?.message || 'Failed to load equipment failure details'}</Alert.Error>;
     }
 
     return (
         <div className="min-h-screen bg-blue-50 flex items-center justify-center px-4 py-10">
             <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Vendor Details</h1>
-                    <p className="mt-2 text-gray-500">View vendor information</p>
+                <div className="px-6 py-4 border-b border-gray-200 text-center mb-8">
+                    <h1 className="text-3xl font-bold text-gray-900">Equipment Failure Details</h1>
+                    <p className="mt-2 text-gray-500">View equipment failure information</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <ViewText label="Vendor Name" value={vendor?.name} />
-                    <ViewText label="Service Type" value={vendor?.service_type} />
-                    <ViewText label="Organization" value={vendor?.organization_name} />
-                    <ViewText label="Email" value={vendor?.email} />
-                    <ViewText label="Phone" value={vendor?.phone} />
-                    <ViewText label="Created At" value={formatDate(vendor?.created_at)} />
+                    <ViewText label="Failure Type" value={failure?.failure_type} />
+                    <ViewText label="Failure Date" value={formatDate(failure?.failure_date)} />
+                    <ViewText label="Organization Name" value={failure?.organization_name} />
+                    <ViewText label="Equipment Name" value={failure?.equipment_name} />
+                    <ViewText label="Subpart Name" value={failure?.subpart_name} />
+                    <ViewText label="Downtime (minutes)" value={failure?.downtime_minutes} />
+                    <ViewText label="Description" value={failure?.description} />
                 </div>
 
                 <div className="mt-8 flex justify-center">
                     <button
-                        onClick={() => navigate('/vendor')}
+                        onClick={() => navigate('/EquipmentFailure')}
                         className="px-6 py-2 border border-gray-300 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition"
                     >
                         Back
@@ -80,4 +81,4 @@ ViewText.propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.node])
 };
 
-export default VendorView;
+export default EquipmentFailureView;

@@ -3,19 +3,19 @@ import { useQuery } from '@tanstack/react-query';
 import { RotatingLines } from 'react-loader-spinner';
 import PropTypes from 'prop-types';
 import Alert from '@/utils/components/ui/Alert';
-import { VendorByIdApi } from '@/api/VendorApi';
+import { PermissionByIdApi } from '@/api/PermissionApi';
 
-const VendorView = () => {
-    const { vendor_id } = useParams();
+const PermissionView = () => {
+    const { permission_id } = useParams();
     const navigate = useNavigate();
 
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ['vendor-by-id', vendor_id],
-        queryFn: () => VendorByIdApi(vendor_id),
-        enabled: !!vendor_id
+        queryKey: ['permission-by-id', permission_id],
+        queryFn: () => PermissionByIdApi(permission_id),
+        enabled: !!permission_id
     });
 
-    const vendor = data?.value?.data;
+    const permission = data?.data;
 
     if (isLoading) {
         return (
@@ -26,29 +26,38 @@ const VendorView = () => {
     }
 
     if (isError) {
-        return <Alert.Error className="m-6">{error?.message || 'Failed to load vendor details'}</Alert.Error>;
+        return <Alert.Error className="m-6">{error?.message || 'Failed to load permission details'}</Alert.Error>;
     }
 
     return (
         <div className="min-h-screen bg-blue-50 flex items-center justify-center px-4 py-10">
             <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Vendor Details</h1>
-                    <p className="mt-2 text-gray-500">View vendor information</p>
+                    <h1 className="text-3xl font-bold text-gray-900">Permission Details</h1>
+                    <p className="mt-2 text-gray-500">View permission information</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <ViewText label="Vendor Name" value={vendor?.name} />
-                    <ViewText label="Service Type" value={vendor?.service_type} />
-                    <ViewText label="Organization" value={vendor?.organization_name} />
-                    <ViewText label="Email" value={vendor?.email} />
-                    <ViewText label="Phone" value={vendor?.phone} />
-                    <ViewText label="Created At" value={formatDate(vendor?.created_at)} />
+                    <ViewText label="Permission Code" value={permission?.permission_code} />
+                    <ViewText label="Description" value={permission?.description} />
+                    <ViewText
+                        label="Status"
+                        value={
+                            <span
+                                className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${
+                                    permission?.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                }`}
+                            >
+                                {permission?.is_active ? 'Active' : 'Inactive'}
+                            </span>
+                        }
+                    />
+                    <ViewText label="Created At" value={formatDate(permission?.created_at)} />
                 </div>
 
                 <div className="mt-8 flex justify-center">
                     <button
-                        onClick={() => navigate('/vendor')}
+                        onClick={() => navigate('/permission')}
                         className="px-6 py-2 border border-gray-300 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition"
                     >
                         Back
@@ -80,4 +89,4 @@ ViewText.propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.node])
 };
 
-export default VendorView;
+export default PermissionView;

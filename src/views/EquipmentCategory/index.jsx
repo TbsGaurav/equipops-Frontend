@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiEye } from 'react-icons/fi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { RotatingLines } from 'react-loader-spinner';
 import { useNavigate } from 'react-router';
@@ -44,6 +44,10 @@ const EquipmentCategory = () => {
 
     const handleCreate = () => navigate('/EquipmentCategory/create');
     const handleEdit = (cat) => navigate(`/EquipmentCategory/edit/${cat.category_id}`);
+    const handleView = (e, cat) => {
+        e.stopPropagation();
+        navigate(`/EquipmentCategory/view/${cat.category_id}`);
+    };
 
     const deleteMutation = useMutation({
         mutationFn: EquipmentCategoryDeleteApi,
@@ -143,6 +147,13 @@ const EquipmentCategory = () => {
                                             <td className="px-6 py-4">{new Date(cat.created_at).toLocaleDateString()}</td>
                                             <td className="px-6 py-4 text-center">
                                                 <div className="flex items-center justify-center gap-3">
+                                                    <button
+                                                        onClick={(e) => handleView(e, cat)}
+                                                        className="cursor-pointer text-green-600 hover:text-green-800"
+                                                        title="View Category"
+                                                    >
+                                                        <FiEye size={18} />
+                                                    </button>
                                                     <FiEdit
                                                         className="cursor-pointer text-indigo-600 hover:text-indigo-800"
                                                         onClick={() => handleEdit(cat)}

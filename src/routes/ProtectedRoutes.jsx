@@ -46,6 +46,10 @@ import AuditLog from '@/views/AuditLog';
 import Permission from '@/views/Permission';
 import PermissionForm from '@/views/Permission/PermissionForm';
 import VendorView from '@/views/Vendor/VendorView';
+import EquipmentCategoryView from '@/views/EquipmentCategory/EquipmentCategoryView';
+import EquipmentFailureView from '@/views/EquipmentFailure/EquipmentFailureView';
+import EquipmentSubpartView from '@/views/EquipmentSubpart/EquipmentSubpartView';
+import PermissionView from '@/views/Permission/PermissionView';
 
 const ProtectedRoutes = [
     {
@@ -163,7 +167,8 @@ const ProtectedRoutes = [
                 children: [
                     { path: '', element: <EquipmentCategory /> },
                     { path: 'create', element: <EquipmentCategoryForm /> },
-                    { path: 'edit/:category_id', element: <EquipmentCategoryForm /> }
+                    { path: 'edit/:category_id', element: <EquipmentCategoryForm /> },
+                    { path: '/equipmentcategory/view/:category_id', element: <EquipmentCategoryView /> }
                 ]
             },
             {
@@ -171,7 +176,8 @@ const ProtectedRoutes = [
                 children: [
                     { path: '', element: <EquipmentFailure /> },
                     { path: 'create', element: <EquipmentFailureForm /> },
-                    { path: 'edit/:failure_id', element: <EquipmentFailureForm /> }
+                    { path: 'edit/:failure_id', element: <EquipmentFailureForm /> },
+                    { path: '/equipmentfailure/view/:failure_id', element: <EquipmentFailureView /> }
                 ]
             },
             {
@@ -179,7 +185,8 @@ const ProtectedRoutes = [
                 children: [
                     { path: '', element: <EquipmentSubpart /> },
                     { path: 'create', element: <EquipmentSubpartForm /> },
-                    { path: 'edit/:subpart_id', element: <EquipmentSubpartForm /> }
+                    { path: 'edit/:subpart_id', element: <EquipmentSubpartForm /> },
+                    { path: '/equipmentsubpart/view/:subpart_id', element: <EquipmentSubpartView /> }
                 ]
             },
             {
@@ -195,7 +202,8 @@ const ProtectedRoutes = [
                 children: [
                     { path: '', element: <Permission /> },
                     { path: 'create', element: <PermissionForm /> },
-                    { path: 'edit/:permission_id', element: <PermissionForm /> }
+                    { path: 'edit/:permission_id', element: <PermissionForm /> },
+                    { path: '/permission/view/:permission_id', element: <PermissionView /> }
                 ]
             },
             {

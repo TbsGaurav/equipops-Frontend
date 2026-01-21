@@ -43,7 +43,7 @@ const EquipmentSubpartForm = () => {
         }
     });
 
-    const equipments = eqData?.data || [];
+    const subparts = eqData?.data || [];
 
     /* ================= GET BY ID ================= */
     const { data, isFetching } = useQuery({
@@ -132,7 +132,7 @@ const EquipmentSubpartForm = () => {
                         control={control}
                         rules={{ required: 'Equipment is required' }}
                         render={({ field }) => {
-                            const options = equipments.map((eq) => ({
+                            const options = subparts.map((eq) => ({
                                 value: eq.equipment_id,
                                 label: eq.name
                             }));
