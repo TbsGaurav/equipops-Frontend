@@ -3,13 +3,11 @@ import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { RotatingLines } from 'react-loader-spinner';
 import { useNavigate } from 'react-router';
-
 import Button from '@/utils/components/ui/Button';
 import InputField from '@/utils/components/ui/InputField';
 import Alert from '@/utils/components/ui/Alert';
 import DeleteAlertDialog from '@/utils/components/ui/DeleteAlertDialog';
 import Toast from '@/utils/toast';
-
 import { EquipmentFailureListApi, EquipmentFailureDeleteApi } from '@/api/EquipmentFailureApi';
 
 const ITEMS_PER_PAGE = 10;
@@ -21,21 +19,18 @@ const EquipmentFailure = () => {
 
     const navigate = useNavigate();
 
-    /* ================= QUERY PARAMS ================= */
     const params = {
         search: searchTerm,
         page: currentPage,
         length: ITEMS_PER_PAGE
     };
 
-    /* ================= FETCH ================= */
     const { data, isLoading, isError, error, refetch } = useQuery({
         queryKey: ['equipmentFailures', currentPage, searchTerm],
         queryFn: () => EquipmentFailureListApi(params),
         keepPreviousData: true
     });
 
-    /* ================= DATA ================= */
     const failures = data?.value?.data?.failureData || [];
     const totalCount = data?.value?.data?.totalNumbers || 0;
     const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
@@ -43,14 +38,9 @@ const EquipmentFailure = () => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalCount);
 
-    /* ================= ACTIONS ================= */
     const handleCreate = () => navigate('/EquipmentFailure/create');
+    const handleEdit = (failure) => navigate(`/EquipmentFailure/edit/${failure.failure_id}`);
 
-    const handleEdit = (failure) => {
-        navigate(`/EquipmentFailure/edit/${failure.failure_id}`);
-    };
-
-    /* ================= DELETE ================= */
     const deleteMutation = useMutation({
         mutationFn: EquipmentFailureDeleteApi,
         onSuccess: () => {
@@ -64,36 +54,39 @@ const EquipmentFailure = () => {
     });
 
     const handleDelete = () => {
-        deleteMutation.mutate({ failure_id: showDeleteDialog.failure_id });
+        if (showDeleteDialog) deleteMutation.mutate({ failure_id: showDeleteDialog.failure_id });
     };
 
     return (
         <Fragment>
-            <div className="flex flex-col gap-6 h-full">
+            <div className="space-y-6 pb-10">
                 {/* HEADER */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 className="text-xl font-semibold text-gray-900">Equipment Failures</h1>
-                        <p className="text-sm text-gray-500">Manage failures, search, sort and organize them.</p>
+                        <h2 className="text-2xl font-bold text-gray-900">Equipment Failures</h2>
+                        <p className="mt-1 text-sm text-gray-600">Manage, search and organize equipment failures</p>
                     </div>
 
-                    <div className="flex gap-2 items-center">
-                        <span className="px-3 py-1 text-xs rounded-full bg-gray-100">{totalCount} total failures</span>
-                        <Button variant="contained" color="primary" onClick={handleCreate}>
-                            + Create Failure
+                    <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100">
+                            {totalCount} failures
+                        </span>
+                        <Button variant="contained" color="primary" size="md" onClick={handleCreate}>
+                            + New Failure
                         </Button>
                     </div>
                 </div>
 
                 {/* SEARCH */}
-                <div className="bg-white border rounded-lg p-4">
+                <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
                     <InputField
-                        placeholder="Search failure"
+                        placeholder="Search failure..."
                         value={searchTerm}
                         onChange={(e) => {
                             setSearchTerm(e.target.value);
                             setCurrentPage(1);
                         }}
+                        className="max-w-md"
                     />
                 </div>
 
@@ -101,99 +94,89 @@ const EquipmentFailure = () => {
                 {isError && <Alert.Error>{error?.message || 'Failed to load failures'}</Alert.Error>}
 
                 {/* TABLE */}
-                <div className="bg-white border rounded-lg overflow-hidden">
-                    <table className="w-full text-sm table-fixed">
-                        {/* ✅ COLUMN WIDTH FIX */}
-                        <colgroup>
-                            <col className="w-[15%]" /> {/* Failure Type */}
-                            <col className="w-[15%]" /> {/* Equipment Name */}
-                            <col className="w-[12%]" /> {/* Subpart */}
-                            <col className="w-[15%]" /> {/* Organization */}
-                            <col className="w-[18%]" /> {/* Description */}
-                            <col className="w-[10%]" /> {/* Failure Date */}
-                            <col className="w-[8%]" /> {/* Downtime */}
-                            <col className="w-[7%]" /> {/* Actions */}
-                        </colgroup>
-
-                        <thead className="bg-gray-50 border-b">
-                            <tr>
-                                <th className="p-3 text-left">Failure Type</th>
-                                <th className="p-3 text-left">Equipment Name</th>
-                                <th className="p-3 text-left">Subpart</th>
-                                <th className="p-3 text-left">Organization</th>
-                                <th className="p-3 text-left">Description</th>
-                                <th className="p-3 text-left">Failure Date</th>
-                                <th className="p-3 text-left">Downtime (min)</th>
-                                <th className="p-3 text-center">Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {isLoading ? (
+                <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
                                 <tr>
-                                    <td colSpan={8} className="p-8 text-center">
-                                        <RotatingLines width="24" />
-                                    </td>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Failure Type</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Equipment Name</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Subpart</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Organization</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Description</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Failure Date</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Downtime (min)</th>
+                                    <th className="px-6 py-3.5 text-center text-xs font-bold uppercase tracking-wider">Actions</th>
                                 </tr>
-                            ) : failures.length ? (
-                                failures.map((failure) => (
-                                    <tr key={failure.failure_id} className="border-b hover:bg-gray-50">
-                                        <td className="p-3">{failure.failure_type}</td>
-                                        <td className="p-3">{failure.equipment_name}</td>
-                                        <td className="p-3">{failure.subpart_name}</td>
-                                        <td className="p-3">{failure.organization_name}</td>
-                                        <td className="p-3 break-words">{failure.description}</td>
-                                        <td className="p-3">{new Date(failure.failure_date).toLocaleString()}</td>
-                                        <td className="p-3">{failure.downtime_minutes}</td>
-                                        <td className="p-3 text-center">
-                                            <div className="flex justify-center gap-3">
-                                                <FiEdit className="cursor-pointer text-primary-dark" onClick={() => handleEdit(failure)} />
-                                                <FiTrash2
-                                                    className="cursor-pointer text-error"
-                                                    onClick={() => setShowDeleteDialog(failure)}
-                                                />
-                                            </div>
+                            </thead>
+
+                            <tbody className="divide-y divide-gray-100 bg-white">
+                                {isLoading ? (
+                                    <tr>
+                                        <td colSpan={8} className="py-16 text-center">
+                                            <RotatingLines width="32" strokeColor="#6366f1" />
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={8} className="p-8 text-center text-gray-500">
-                                        No failures found
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                ) : failures.length ? (
+                                    failures.map((failure) => (
+                                        <tr key={failure.failure_id} className="hover:bg-indigo-50/40 transition-colors">
+                                            <td className="px-6 py-4">{failure.failure_type}</td>
+                                            <td className="px-6 py-4">{failure.equipment_name}</td>
+                                            <td className="px-6 py-4">{failure.subpart_name}</td>
+                                            <td className="px-6 py-4">{failure.organization_name}</td>
+                                            <td className="px-6 py-4 break-words">{failure.description}</td>
+                                            <td className="px-6 py-4">{new Date(failure.failure_date).toLocaleString()}</td>
+                                            <td className="px-6 py-4">{failure.downtime_minutes}</td>
+                                            <td className="px-6 py-4 text-center">
+                                                <div className="flex justify-center gap-3">
+                                                    <FiEdit
+                                                        className="cursor-pointer text-indigo-600 hover:text-indigo-800"
+                                                        onClick={() => handleEdit(failure)}
+                                                    />
+                                                    <FiTrash2
+                                                        className="cursor-pointer text-rose-600 hover:text-rose-800"
+                                                        onClick={() => setShowDeleteDialog(failure)}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={8} className="py-16 text-center text-gray-500">
+                                            No failures found
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 {/* PAGINATION */}
                 {totalPages > 0 && (
-                    <div className="flex justify-between items-center">
-                        <p className="text-sm">
-                            Showing {startIndex + 1} to {endIndex} of {totalCount}
-                        </p>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-sm text-gray-600">
+                        <div>
+                            Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{endIndex}</span>{' '}
+                            of <span className="font-medium">{totalCount}</span>
+                        </div>
                         <div className="flex gap-2">
-                            <button
-                                disabled={currentPage === 1}
-                                onClick={() => setCurrentPage((p) => p - 1)}
-                                className="px-3 py-2 border rounded-md"
-                            >
+                            <Button variant="outlined" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
                                 Previous
-                            </button>
-                            <button
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                size="sm"
                                 disabled={currentPage === totalPages}
                                 onClick={() => setCurrentPage((p) => p + 1)}
-                                className="px-3 py-2 border rounded-md"
                             >
                                 Next
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* DELETE DIALOG */}
             <DeleteAlertDialog
                 isOpen={Boolean(showDeleteDialog)}
                 itemName={showDeleteDialog?.failure_type}

@@ -3,26 +3,23 @@ import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { RotatingLines } from 'react-loader-spinner';
 import { useNavigate } from 'react-router';
-
 import Button from '@/utils/components/ui/Button';
 import InputField from '@/utils/components/ui/InputField';
 import Alert from '@/utils/components/ui/Alert';
 import DeleteAlertDialog from '@/utils/components/ui/DeleteAlertDialog';
 import Toast from '@/utils/toast';
-
 import { EquipmentSubpartListApi, EquipmentSubpartDeleteApi } from '@/api/EquipmentSubpartApi';
 
 const ITEMS_PER_PAGE = 10;
 
 const EquipmentSubpart = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const [statusFilter, setStatusFilter] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
     const [showDeleteDialog, setShowDeleteDialog] = useState(null);
 
     const navigate = useNavigate();
 
-    /* ================= QUERY PARAMS ================= */
     const params = {
         search: searchTerm,
         status: statusFilter === '' ? null : statusFilter === 'true',
@@ -30,14 +27,12 @@ const EquipmentSubpart = () => {
         length: ITEMS_PER_PAGE
     };
 
-    /* ================= FETCH ================= */
     const { data, isLoading, isError, error, refetch } = useQuery({
-        queryKey: ['equipment-subparts', currentPage, searchTerm, statusFilter],
+        queryKey: ['equipmentSubparts', currentPage, searchTerm, statusFilter],
         queryFn: () => EquipmentSubpartListApi(params),
         keepPreviousData: true
     });
 
-    /* ================= DATA ================= */
     const subparts = data?.value?.data?.subpartData || [];
     const totalCount = data?.value?.data?.totalNumbers || 0;
     const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
@@ -45,14 +40,9 @@ const EquipmentSubpart = () => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalCount);
 
-    /* ================= ACTIONS ================= */
     const handleCreate = () => navigate('/EquipmentSubpart/create');
+    const handleEdit = (row) => navigate(`/EquipmentSubpart/edit/${row.subpart_id}`);
 
-    const handleEdit = (row) => {
-        navigate(`/EquipmentSubpart/edit/${row.subpart_id}`);
-    };
-
-    /* ================= DELETE ================= */
     const deleteMutation = useMutation({
         mutationFn: EquipmentSubpartDeleteApi,
         onSuccess: () => {
@@ -66,38 +56,40 @@ const EquipmentSubpart = () => {
     });
 
     const handleDelete = () => {
-        deleteMutation.mutate({ subpart_id: showDeleteDialog.subpart_id });
+        if (showDeleteDialog) deleteMutation.mutate({ subpart_id: showDeleteDialog.subpart_id });
     };
 
     return (
         <Fragment>
-            <div className="flex flex-col gap-6 h-full">
+            <div className="space-y-6 pb-10">
                 {/* HEADER */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 className="text-xl font-semibold text-gray-900">Equipment Subpart</h1>
-                        <p className="text-sm text-gray-500">Manage subparts, search, sort and organize them.</p>
+                        <h2 className="text-2xl font-bold text-gray-900">Equipment Subparts</h2>
+                        <p className="mt-1 text-sm text-gray-600">Manage, search and organize equipment subparts</p>
                     </div>
 
-                    <div className="flex gap-2 items-center">
-                        <span className="px-3 py-1 text-xs rounded-full bg-gray-100">{totalCount} total Subparts</span>
-                        <Button variant="contained" color="primary" onClick={handleCreate}>
-                            + Create Subpart
+                    <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100">
+                            {totalCount} subparts
+                        </span>
+                        <Button variant="contained" color="primary" size="md" onClick={handleCreate}>
+                            + New Subpart
                         </Button>
                     </div>
                 </div>
 
-                {/* SEARCH */}
-                <div className="bg-white border rounded-lg p-4 flex gap-4">
+                {/* SEARCH + STATUS FILTER */}
+                <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex gap-4">
                     <InputField
-                        placeholder="Search subpart"
+                        placeholder="Search subpart..."
                         value={searchTerm}
                         onChange={(e) => {
                             setSearchTerm(e.target.value);
                             setCurrentPage(1);
                         }}
+                        className="max-w-md"
                     />
-
                     <select
                         value={statusFilter}
                         onChange={(e) => {
@@ -116,102 +108,93 @@ const EquipmentSubpart = () => {
                 {isError && <Alert.Error>{error?.message || 'Failed to load subparts'}</Alert.Error>}
 
                 {/* TABLE */}
-                <div className="bg-white border rounded-lg overflow-hidden">
-                    <table className="w-full text-sm table-fixed">
-                        {/* ✅ COLUMN WIDTH FIX */}
-                        <colgroup>
-                            <col className="w-[18%]" /> {/* Equipment */}
-                            <col className="w-[18%]" /> {/* Subpart Name */}
-                            <col className="w-[22%]" /> {/* Description */}
-                            <col className="w-[10%]" /> {/* Status */}
-                            <col className="w-[12%]" /> {/* QR Code */}
-                            <col className="w-[12%]" /> {/* Created At */}
-                            <col className="w-[8%]" /> {/* Actions */}
-                        </colgroup>
-
-                        <thead className="bg-gray-50 border-b">
-                            <tr>
-                                <th className="p-3 text-left">Equipment</th>
-                                <th className="p-3 text-left">Subpart Name</th>
-                                <th className="p-3 text-left">Description</th>
-                                <th className="p-3 text-left">Status</th>
-                                <th className="p-3 text-left">QR Code</th>
-                                <th className="p-3 text-left">Created At</th>
-                                <th className="p-3 text-center">Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {isLoading ? (
+                <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
                                 <tr>
-                                    <td colSpan={7} className="p-8 text-center">
-                                        <RotatingLines width="24" />
-                                    </td>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Equipment</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Subpart Name</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Description</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Status</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">QR Code</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Created At</th>
+                                    <th className="px-6 py-3.5 text-center text-xs font-bold uppercase tracking-wider">Actions</th>
                                 </tr>
-                            ) : subparts.length ? (
-                                subparts.map((row) => (
-                                    <tr key={row.subpart_id} className="border-b hover:bg-gray-50">
-                                        <td className="p-3">{row.equipment_name}</td>
-                                        <td className="p-3">{row.subpart_name}</td>
-                                        <td className="p-3 break-words">{row.description}</td>
-                                        <td className="p-3">
-                                            <span
-                                                className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                                    row.status ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                                                }`}
-                                            >
-                                                {row.status ? 'Active' : 'Inactive'}
-                                            </span>
-                                        </td>
-                                        <td className="p-3 break-all">{row.qr_code}</td>
-                                        <td className="p-3">{new Date(row.created_at).toLocaleString()}</td>
-                                        <td className="p-3 text-center">
-                                            <div className="flex justify-center gap-3">
-                                                <FiEdit className="cursor-pointer text-primary-dark" onClick={() => handleEdit(row)} />
-                                                <FiTrash2 className="cursor-pointer text-error" onClick={() => setShowDeleteDialog(row)} />
-                                            </div>
+                            </thead>
+
+                            <tbody className="divide-y divide-gray-100 bg-white">
+                                {isLoading ? (
+                                    <tr>
+                                        <td colSpan={7} className="py-16 text-center">
+                                            <RotatingLines width="32" strokeColor="#6366f1" />
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={7} className="p-8 text-center text-gray-500">
-                                        No subparts found
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                ) : subparts.length ? (
+                                    subparts.map((row) => (
+                                        <tr key={row.subpart_id} className="hover:bg-indigo-50/40 transition-colors">
+                                            <td className="px-6 py-4">{row.equipment_name}</td>
+                                            <td className="px-6 py-4">{row.subpart_name}</td>
+                                            <td className="px-6 py-4 break-words">{row.description}</td>
+                                            <td className="px-6 py-4">
+                                                <span
+                                                    className={`px-3 py-1 rounded-full text-xs font-medium ${row.status ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
+                                                >
+                                                    {row.status ? 'Active' : 'Inactive'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 break-all">{row.qr_code}</td>
+                                            <td className="px-6 py-4">{new Date(row.created_at).toLocaleString()}</td>
+                                            <td className="px-6 py-4 text-center">
+                                                <div className="flex justify-center gap-3">
+                                                    <FiEdit
+                                                        className="cursor-pointer text-indigo-600 hover:text-indigo-800"
+                                                        onClick={() => handleEdit(row)}
+                                                    />
+                                                    <FiTrash2
+                                                        className="cursor-pointer text-rose-600 hover:text-rose-800"
+                                                        onClick={() => setShowDeleteDialog(row)}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={7} className="py-16 text-center text-gray-500">
+                                            No subparts found
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 {/* PAGINATION */}
                 {totalPages > 0 && (
-                    <div className="flex justify-between items-center">
-                        <p className="text-sm">
-                            Showing {startIndex + 1} to {endIndex} of {totalCount}
-                        </p>
-
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-sm text-gray-600">
+                        <div>
+                            Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{endIndex}</span>{' '}
+                            of <span className="font-medium">{totalCount}</span>
+                        </div>
                         <div className="flex gap-2">
-                            <button
-                                disabled={currentPage === 1}
-                                onClick={() => setCurrentPage((p) => p - 1)}
-                                className="px-3 py-2 border rounded-md"
-                            >
+                            <Button variant="outlined" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
                                 Previous
-                            </button>
-                            <button
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                size="sm"
                                 disabled={currentPage === totalPages}
                                 onClick={() => setCurrentPage((p) => p + 1)}
-                                className="px-3 py-2 border rounded-md"
                             >
                                 Next
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* DELETE DIALOG */}
             <DeleteAlertDialog
                 isOpen={Boolean(showDeleteDialog)}
                 itemName={showDeleteDialog?.subpart_name}

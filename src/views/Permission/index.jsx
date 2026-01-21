@@ -9,6 +9,7 @@ import Alert from '@/utils/components/ui/Alert';
 import DeleteAlertDialog from '@/utils/components/ui/DeleteAlertDialog';
 import Toast from '@/utils/toast';
 import { PermissionListApi, PermissionDeleteApi } from '@/api/PermissionApi';
+import clsx from 'clsx';
 
 const Permission = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -40,10 +41,7 @@ const Permission = () => {
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalCount);
 
     const handleCreate = () => navigate('/permission/create');
-
-    const handleEdit = (row) => {
-        navigate(`/permission/edit/${row.permission_id}`);
-    };
+    const handleEdit = (row) => navigate(`/permission/edit/${row.permission_id}`);
 
     const deleteMutation = useMutation({
         mutationFn: PermissionDeleteApi,
@@ -65,26 +63,35 @@ const Permission = () => {
 
     return (
         <Fragment>
-            <div className="flex flex-col gap-6 h-full">
+            <div className="space-y-6 pb-10">
                 {/* Header */}
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 className="text-xl font-semibold">Permissions</h1>
-                        <p className="text-sm text-gray-500">Manage system permissions</p>
+                        <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Permissions</h2>
+                        <p className="mt-1 text-sm text-gray-600">Manage, search and organize system permissions</p>
                     </div>
 
-                    <Button onClick={handleCreate}>+ Create Permission</Button>
+                    <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100">
+                            {totalCount} permissions
+                        </span>
+
+                        <Button variant="contained" color="primary" size="md" onClick={handleCreate} className="font-medium shadow-sm">
+                            + New Permission
+                        </Button>
+                    </div>
                 </div>
 
-                {/* SEARCH */}
-                <div className="bg-white border rounded-lg p-4 flex gap-4">
+                {/* Search & Filters */}
+                <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-col sm:flex-row gap-4">
                     <InputField
-                        placeholder="Search permission"
+                        placeholder="Search permission..."
                         value={searchTerm}
                         onChange={(e) => {
                             setSearchTerm(e.target.value);
                             setCurrentPage(1);
                         }}
+                        className="max-w-md"
                     />
 
                     <select
@@ -93,7 +100,7 @@ const Permission = () => {
                             setStatusFilter(e.target.value);
                             setCurrentPage(1);
                         }}
-                        className="border rounded-md px-3 py-2 text-sm"
+                        className="border rounded-md px-5 py-2 text-sm max-w-xs"
                     >
                         <option value="">All Status</option>
                         <option value="true">Active</option>
@@ -101,93 +108,107 @@ const Permission = () => {
                     </select>
                 </div>
 
-                {isError && <Alert.Error>{error?.message}</Alert.Error>}
+                {/* Error */}
+                {isError && (
+                    <Alert.Error className="rounded-xl border-l-4 border-l-red-500">
+                        {error?.message || 'Failed to load permissions'}
+                    </Alert.Error>
+                )}
 
-                {/* TABLE */}
-                <div className="bg-white border rounded-lg overflow-hidden">
-                    <table className="w-full text-sm table-fixed">
-                        {/* ✅ COLUMN WIDTH FIX */}
-                        <colgroup>
-                            <col className="w-[18%]" /> {/* Permission Code */}
-                            <col className="w-[22%]" /> {/* Description */}
-                            <col className="w-[10%]" /> {/* Status */}
-                            <col className="w-[12%]" /> {/* Created At */}
-                            <col className="w-[8%]" /> {/* Actions */}
-                        </colgroup>
-
-                        <thead className="bg-gray-50 border-b">
-                            <tr>
-                                <th className="p-3 text-left">Permission Code</th>
-                                <th className="p-3 text-left">Description</th>
-                                <th className="p-3 text-left">Status</th>
-                                <th className="p-3 text-left">Created At</th>
-                                <th className="p-3 text-center">Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {isLoading ? (
+                {/* Table */}
+                <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
                                 <tr>
-                                    <td colSpan={7} className="p-8 text-center">
-                                        <RotatingLines width="24" />
-                                    </td>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase">Permission Code</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase">Description</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase">Status</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase">Created</th>
+                                    <th className="px-6 py-3.5 text-center text-xs font-bold uppercase">Actions</th>
                                 </tr>
-                            ) : permissions.length ? (
-                                permissions.map((row) => (
-                                    <tr key={row.permission_id} className="border-b hover:bg-gray-50">
-                                        <td className="p-3">{row.permission_code}</td>
-                                        <td className="p-3 break-words">{row.description}</td>
-                                        <td className="p-3">
-                                            <span
-                                                className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                                    row.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                                                }`}
-                                            >
-                                                {row.is_active ? 'Active' : 'Inactive'}
-                                            </span>
-                                        </td>
-                                        <td className="p-3">{new Date(row.created_at).toLocaleString()}</td>
-                                        <td className="p-3 text-center">
-                                            <div className="flex justify-center gap-3">
-                                                <FiEdit className="cursor-pointer text-primary-dark" onClick={() => handleEdit(row)} />
-                                                <FiTrash2 className="cursor-pointer text-error" onClick={() => setShowDeleteDialog(row)} />
-                                            </div>
+                            </thead>
+
+                            <tbody className="divide-y divide-gray-100 bg-white">
+                                {isLoading ? (
+                                    <tr>
+                                        <td colSpan={5} className="py-16 text-center">
+                                            <RotatingLines width="32" strokeColor="#6366f1" />
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={7} className="p-8 text-center text-gray-500">
-                                        No permission found
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                ) : permissions.length > 0 ? (
+                                    permissions.map((row) => (
+                                        <tr key={row.permission_id} className="hover:bg-indigo-50/40 transition-colors">
+                                            <td className="px-6 py-4">{row.permission_code}</td>
+                                            <td className="px-6 py-4 text-gray-600 break-words">{row.description}</td>
+                                            <td className="px-6 py-4">
+                                                <span
+                                                    className={clsx(
+                                                        'px-3 py-1 rounded-full text-xs font-medium',
+                                                        row.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                                    )}
+                                                >
+                                                    {row.is_active ? 'Active' : 'Inactive'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 text-gray-600">
+                                                {new Date(row.created_at).toLocaleDateString('en-GB', {
+                                                    day: 'numeric',
+                                                    month: 'short',
+                                                    year: 'numeric'
+                                                })}
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <div className="flex items-center justify-center gap-3">
+                                                    <button
+                                                        onClick={() => handleEdit(row)}
+                                                        className="text-indigo-600 hover:text-indigo-800 p-1 rounded hover:bg-indigo-50"
+                                                    >
+                                                        <FiEdit size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setShowDeleteDialog(row)}
+                                                        className="text-rose-600 hover:text-rose-800 p-1 rounded hover:bg-rose-50"
+                                                    >
+                                                        <FiTrash2 size={18} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={5} className="py-16 text-center text-gray-500">
+                                            No permissions found
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                {/* PAGINATION */}
+                {/* Pagination */}
                 {totalPages > 0 && (
-                    <div className="flex justify-between items-center">
-                        <p className="text-sm">
-                            Showing {startIndex + 1} to {endIndex} of {totalCount}
-                        </p>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-sm text-gray-600">
+                        <div>
+                            Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{endIndex}</span>{' '}
+                            of <span className="font-medium">{totalCount}</span>
+                        </div>
 
                         <div className="flex gap-2">
-                            <button
-                                disabled={currentPage === 1}
-                                onClick={() => setCurrentPage((p) => p - 1)}
-                                className="px-3 py-2 border rounded-md"
-                            >
+                            <Button variant="outlined" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
                                 Previous
-                            </button>
-                            <button
+                            </Button>
+
+                            <Button
+                                variant="outlined"
+                                size="sm"
                                 disabled={currentPage === totalPages}
                                 onClick={() => setCurrentPage((p) => p + 1)}
-                                className="px-3 py-2 border rounded-md"
                             >
                                 Next
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 )}
@@ -195,7 +216,7 @@ const Permission = () => {
 
             <DeleteAlertDialog
                 itemName={showDeleteDialog?.permission_code}
-                isOpen={!!showDeleteDialog}
+                isOpen={Boolean(showDeleteDialog)}
                 onCancel={() => setShowDeleteDialog(null)}
                 onConfirm={handleDelete}
                 loading={deleteMutation.isPending}

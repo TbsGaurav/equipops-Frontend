@@ -21,7 +21,6 @@ const EquipmentCategory = () => {
 
     const navigate = useNavigate();
 
-    /* ================= QUERY PARAMS ================= */
     const params = {
         search: searchTerm,
         page: currentPage,
@@ -30,14 +29,12 @@ const EquipmentCategory = () => {
         orderDirection
     };
 
-    /* ================= FETCH ================= */
     const { data, isLoading, isError, error, refetch } = useQuery({
         queryKey: ['equipmentCategories', currentPage, searchTerm, orderColumn, orderDirection],
         queryFn: () => EquipmentCategoryListApi(params),
         keepPreviousData: true
     });
 
-    /* ================= DATA ================= */
     const categories = data?.value?.data?.categoryData || [];
     const totalCount = data?.value?.data?.totalNumbers || 0;
     const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
@@ -45,15 +42,9 @@ const EquipmentCategory = () => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalCount);
 
-    /* ================= NAVIGATION ================= */
     const handleCreate = () => navigate('/EquipmentCategory/create');
+    const handleEdit = (cat) => navigate(`/EquipmentCategory/edit/${cat.category_id}`);
 
-    const handleEdit = (e, cat) => {
-        e.stopPropagation();
-        navigate(`/EquipmentCategory/edit/${cat.category_id}`);
-    };
-
-    /* ================= DELETE ================= */
     const deleteMutation = useMutation({
         mutationFn: EquipmentCategoryDeleteApi,
         onSuccess: () => {
@@ -67,34 +58,39 @@ const EquipmentCategory = () => {
     });
 
     const handleDelete = () => {
-        deleteMutation.mutate({ category_id: showDeleteDialog.category_id });
+        if (showDeleteDialog) deleteMutation.mutate({ category_id: showDeleteDialog.category_id });
     };
 
     return (
         <Fragment>
-            <div className="flex flex-col gap-6 h-full">
+            <div className="space-y-6 pb-10">
                 {/* HEADER */}
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 className="text-xl font-semibold text-gray-900">Equipment Categories</h1>
-                        <p className="text-sm text-gray-500">Manage equipment categories</p>
+                        <h2 className="text-2xl font-bold text-gray-900">Equipment Categories</h2>
+                        <p className="mt-1 text-sm text-gray-600">Manage, search and organize equipment categories</p>
                     </div>
 
-                    <div className="flex gap-2 items-center">
-                        <span className="px-3 py-1 text-xs rounded-full bg-gray-100">{totalCount} total categories</span>
-                        <Button onClick={handleCreate}>+ Create Category</Button>
+                    <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100">
+                            {totalCount} categories
+                        </span>
+                        <Button variant="contained" color="primary" size="md" onClick={handleCreate}>
+                            + New Category
+                        </Button>
                     </div>
                 </div>
 
                 {/* SEARCH */}
-                <div className="bg-white border rounded-lg p-4">
+                <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
                     <InputField
-                        placeholder="Search category"
+                        placeholder="Search category..."
                         value={searchTerm}
                         onChange={(e) => {
                             setSearchTerm(e.target.value);
                             setCurrentPage(1);
                         }}
+                        className="max-w-md"
                     />
                 </div>
 
@@ -102,97 +98,95 @@ const EquipmentCategory = () => {
                 {isError && <Alert.Error>{error?.message || 'Failed to load categories'}</Alert.Error>}
 
                 {/* TABLE */}
-                <div className="bg-white border rounded-lg overflow-hidden">
-                    <table className="w-full text-sm table-fixed">
-                        {/* ✅ COLUMN WIDTH FIX */}
-                        <colgroup>
-                            <col className="w-[25%]" /> {/* Category Name */}
-                            <col className="w-[15%]" /> {/* Organization */}
-                            <col className="w-[35%]" /> {/* Description */}
-                            <col className="w-[15%]" /> {/* Created */}
-                            <col className="w-[10%]" /> {/* Actions */}
-                        </colgroup>
-
-                        <thead className="bg-gray-50 border-b">
-                            <tr>
-                                <th
-                                    className="p-3 cursor-pointer text-left"
-                                    onClick={() => {
-                                        setOrderColumn('category_name');
-                                        setOrderDirection(orderDirection === 'ASC' ? 'DESC' : 'ASC');
-                                    }}
-                                >
-                                    Category Name {orderColumn === 'category_name' && (orderDirection === 'ASC' ? '↑' : '↓')}
-                                </th>
-                                <th className="p-3 text-left">Organization</th>
-                                <th className="p-3 text-left">Description</th>
-                                <th
-                                    className="p-3 cursor-pointer text-left"
-                                    onClick={() => {
-                                        setOrderColumn('created_at');
-                                        setOrderDirection(orderDirection === 'ASC' ? 'DESC' : 'ASC');
-                                    }}
-                                >
-                                    Created {orderColumn === 'created_at' && (orderDirection === 'ASC' ? '↑' : '↓')}
-                                </th>
-                                <th className="p-3 text-center">Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {isLoading ? (
+                <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
                                 <tr>
-                                    <td colSpan={5} className="p-8 text-center">
-                                        <RotatingLines width="24" />
-                                    </td>
+                                    <th
+                                        onClick={() => {
+                                            setOrderColumn('category_name');
+                                            setOrderDirection(orderDirection === 'ASC' ? 'DESC' : 'ASC');
+                                        }}
+                                        className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                                    >
+                                        Category Name {orderColumn === 'category_name' && (orderDirection === 'ASC' ? '↑' : '↓')}
+                                    </th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Organization</th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider">Description</th>
+                                    <th
+                                        onClick={() => {
+                                            setOrderColumn('created_at');
+                                            setOrderDirection(orderDirection === 'ASC' ? 'DESC' : 'ASC');
+                                        }}
+                                        className="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                                    >
+                                        Created {orderColumn === 'created_at' && (orderDirection === 'ASC' ? '↑' : '↓')}
+                                    </th>
+                                    <th className="px-6 py-3.5 text-center text-xs font-bold uppercase tracking-wider">Actions</th>
                                 </tr>
-                            ) : categories.length ? (
-                                categories.map((cat) => (
-                                    <tr key={cat.category_id} className="border-b hover:bg-gray-50">
-                                        <td className="p-3">{cat.category_name}</td>
-                                        <td className="p-3">{cat.organization_name || '-'}</td>
-                                        <td className="p-3 break-words">{cat.description || '-'}</td>
-                                        <td className="p-3">{new Date(cat.created_at).toLocaleDateString()}</td>
-                                        <td className="p-3 text-center">
-                                            <div className="flex justify-center gap-3">
-                                                <FiEdit className="cursor-pointer text-primary-dark" onClick={(e) => handleEdit(e, cat)} />
-                                                <FiTrash2 className="cursor-pointer text-error" onClick={() => setShowDeleteDialog(cat)} />
-                                            </div>
+                            </thead>
+
+                            <tbody className="divide-y divide-gray-100 bg-white">
+                                {isLoading ? (
+                                    <tr>
+                                        <td colSpan={5} className="py-16 text-center">
+                                            <RotatingLines width="32" strokeColor="#6366f1" />
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={5} className="p-8 text-center text-gray-500">
-                                        No categories found
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                ) : categories.length ? (
+                                    categories.map((cat) => (
+                                        <tr key={cat.category_id} className="hover:bg-indigo-50/40 transition-colors">
+                                            <td className="px-6 py-4">{cat.category_name}</td>
+                                            <td className="px-6 py-4">{cat.organization_name || '-'}</td>
+                                            <td className="px-6 py-4 text-gray-600 break-words">{cat.description || '-'}</td>
+                                            <td className="px-6 py-4">{new Date(cat.created_at).toLocaleDateString()}</td>
+                                            <td className="px-6 py-4 text-center">
+                                                <div className="flex items-center justify-center gap-3">
+                                                    <FiEdit
+                                                        className="cursor-pointer text-indigo-600 hover:text-indigo-800"
+                                                        onClick={() => handleEdit(cat)}
+                                                    />
+                                                    <FiTrash2
+                                                        className="cursor-pointer text-rose-600 hover:text-rose-800"
+                                                        onClick={() => setShowDeleteDialog(cat)}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={5} className="py-16 text-center text-gray-500">
+                                            No categories found
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 {/* PAGINATION */}
                 {totalPages > 0 && (
-                    <div className="flex justify-between items-center">
-                        <p className="text-sm">
-                            Showing {startIndex + 1} to {endIndex} of {totalCount}
-                        </p>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-sm text-gray-600">
+                        <div>
+                            Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{endIndex}</span>{' '}
+                            of <span className="font-medium">{totalCount}</span>
+                        </div>
+
                         <div className="flex gap-2">
-                            <button
-                                disabled={currentPage === 1}
-                                onClick={() => setCurrentPage((p) => p - 1)}
-                                className="px-3 py-2 border rounded-md"
-                            >
+                            <Button variant="outlined" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
                                 Previous
-                            </button>
-                            <button
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                size="sm"
                                 disabled={currentPage === totalPages}
                                 onClick={() => setCurrentPage((p) => p + 1)}
-                                className="px-3 py-2 border rounded-md"
                             >
                                 Next
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 )}

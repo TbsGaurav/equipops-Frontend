@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiEye } from 'react-icons/fi';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { RotatingLines } from 'react-loader-spinner';
 import { useNavigate } from 'react-router';
@@ -17,7 +17,6 @@ const Vendor = () => {
     const [orderDirection, setOrderDirection] = useState('ASC');
     const [showDeleteDialog, setShowDeleteDialog] = useState(null);
 
-    // const permissions = useSelector((state) => state.user.permissions);
     const navigate = useNavigate();
     const itemsPerPage = 10;
 
@@ -44,9 +43,14 @@ const Vendor = () => {
 
     const handleCreate = () => navigate('/vendor/create');
 
-    const handleEdit = (v, ven) => {
-        v.stopPropagation();
+    const handleEdit = (e, ven) => {
+        e.stopPropagation();
         navigate(`/vendor/edit/${ven.vendor_id}`);
+    };
+
+    const handleView = (e, ven) => {
+        e.stopPropagation();
+        navigate(`/vendor/view/${ven.vendor_id}`);
     };
 
     const deleteMutation = useMutation({
@@ -67,138 +71,191 @@ const Vendor = () => {
 
     return (
         <Fragment>
-            <div className="flex flex-col gap-6 h-full">
+            <div className="space-y-6 pb-10">
                 {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 className="text-xl font-semibold text-gray-900">Vendors</h1>
-                        <p className="text-sm text-gray-500">Manage vendors, search, sort and organize them.</p>
+                        <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Vendors</h2>
+                        <p className="mt-1 text-sm text-gray-600">Manage, search, sort and organize your vendors</p>
                     </div>
 
-                    <div className="flex gap-2 items-center">
-                        <span className="px-3 py-1 text-xs rounded-full bg-gray-100">{totalCount} total vendors</span>
-                        {/* {canUpdate(permissions, 'VENDOR') && ( */}
-                        <Button variant="contained" color="primary" onClick={handleCreate}>
-                            + Create Vendor
+                    <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100">
+                            {totalCount} vendors
+                        </span>
+
+                        <Button variant="contained" color="primary" size="md" onClick={handleCreate} className="font-medium shadow-sm">
+                            + New Vendor
                         </Button>
-                        {/* )} */}
                     </div>
                 </div>
 
-                {/* Search */}
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                {/* Search & controls */}
+                <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
                     <InputField
-                        placeholder="Search by name, email or service type"
+                        placeholder="Search by name, email or service type..."
                         value={searchTerm}
-                        onChange={(v) => {
-                            setSearchTerm(v.target.value);
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value);
                             setCurrentPage(1);
                         }}
+                        className="max-w-md"
                     />
                 </div>
 
                 {/* Error */}
-                {isError && <Alert.Error>{error?.message || 'Failed to load vendors'}</Alert.Error>}
+                {isError && (
+                    <Alert.Error className="rounded-xl border-l-4 border-l-red-500">
+                        {error?.message || 'Failed to load vendors'}
+                    </Alert.Error>
+                )}
 
-                {/* Table */}
-                <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                    <table className="w-full text-sm">
-                        <thead className="bg-gray-50 border-b border-gray-200">
-                            <tr>
-                                <th
-                                    onClick={() => {
-                                        setOrderColumn('name');
-                                        setOrderDirection(orderDirection === 'ASC' ? 'DESC' : 'ASC');
-                                    }}
-                                    className="p-3 text-left font-semibold cursor-pointer"
-                                >
-                                    Name {orderColumn === 'name' && (orderDirection === 'ASC' ? '↑' : '↓')}
-                                </th>
-                                <th className="p-3 text-left font-semibold">Email</th>
-                                <th className="p-3 text-left font-semibold">Service Type</th>
-                                <th className="p-3 text-left font-semibold">Organization</th>
-                                <th className="p-3 text-left font-semibold">Phone</th>
-                                {/* <th className="p-3 text-left font-semibold">Status</th> */}
-                                <th
-                                    onClick={() => {
-                                        setOrderColumn('created_at');
-                                        setOrderDirection(orderDirection === 'ASC' ? 'DESC' : 'ASC');
-                                    }}
-                                    className="p-3 text-left font-semibold cursor-pointer"
-                                >
-                                    Created {orderColumn === 'created_at' && (orderDirection === 'ASC' ? '↑' : '↓')}
-                                </th>
-                                <th className="p-3 text-center font-semibold">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {isLoading ? (
+                {/* Table Card */}
+                <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
                                 <tr>
-                                    <td colSpan={8} className="p-8 text-center">
-                                        <RotatingLines width="24" strokeWidth="5" />
-                                    </td>
+                                    <th
+                                        onClick={() => {
+                                            setOrderColumn('name');
+                                            setOrderDirection((prev) => (prev === 'ASC' ? 'DESC' : 'ASC'));
+                                        }}
+                                        className="px-6 py-3.5 text-left text-xs font-bold text-black uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                                    >
+                                        <span className="flex items-center gap-1">
+                                            Name
+                                            {orderColumn === 'name' && (
+                                                <span className="text-gray-400">{orderDirection === 'ASC' ? '↑' : '↓'}</span>
+                                            )}
+                                        </span>
+                                    </th>
+
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold text-black uppercase tracking-wider">Email</th>
+
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold text-black uppercase tracking-wider">
+                                        Service Type
+                                    </th>
+
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                        Organization
+                                    </th>
+                                    <th className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                        Phone
+                                    </th>
+                                    <th
+                                        onClick={() => {
+                                            setOrderColumn('created_at');
+                                            setOrderDirection((prev) => (prev === 'ASC' ? 'DESC' : 'ASC'));
+                                        }}
+                                        className="px-6 py-3.5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                                    >
+                                        <span className="flex items-center gap-1">
+                                            Created
+                                            {orderColumn === 'created_at' && (
+                                                <span className="text-gray-400">{orderDirection === 'ASC' ? '↑' : '↓'}</span>
+                                            )}
+                                        </span>
+                                    </th>
+                                    <th className="px-6 py-3.5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                        Actions
+                                    </th>
                                 </tr>
-                            ) : vendors.length > 0 ? (
-                                vendors.map((ven) => (
-                                    <tr key={ven.vendor_id} className="border-b hover:bg-gray-50">
-                                        <td className="p-3 font-medium">{ven.name}</td>
-                                        <td className="p-3">{ven.email ?? '-'}</td>
-                                        <td className="p-3">{ven.service_type ?? '-'}</td>
-                                        <td className="p-3">{ven.organization_name ?? '-'}</td>
-                                        <td className="p-3">{ven.phone ?? '-'}</td>
-                                        {/* <td className="p-3">
-                                            <span
-                                                className={`px-2 py-1 text-xs rounded-full ${
-                                                    ven.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                                                }`}
-                                            >
-                                                {ven.is_active ? 'Active' : 'Inactive'}
-                                            </span>
-                                        </td> */}
-                                        <td className="p-3">{new Date(ven.created_at).toLocaleDateString()}</td>
-                                        <td className="p-3 text-center flex justify-center gap-2">
-                                            {/* {canUpdate(permissions, 'VENDOR') && ( */}
-                                            <FiEdit className="cursor-pointer text-primary-dark" onClick={(v) => handleEdit(v, ven)} />
-                                            {/* )}
-                                            {canDelete(permissions, 'VENDOR') && ( */}
-                                            <FiTrash2 className="cursor-pointer text-error" onClick={() => setShowDeleteDialog(ven)} />
-                                            {/* )} */}
+                            </thead>
+                            <tbody className="divide-y divide-gray-100 bg-white">
+                                {isLoading ? (
+                                    <tr>
+                                        <td colSpan={7} className="py-16 text-center">
+                                            <div className="flex justify-center">
+                                                <RotatingLines strokeColor="#6366f1" strokeWidth="4" animationDuration="0.75" width="32" />
+                                            </div>
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={8} className="p-10 text-center text-gray-500">
-                                        No vendors found
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                ) : vendors.length > 0 ? (
+                                    vendors.map((ven) => (
+                                        <tr key={ven.vendor_id} className="hover:bg-indigo-50/40 transition-colors duration-150">
+                                            <td className="px-6 py-4 whitespace-nowrap text-gray-900">{ven.name}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                                                {ven.email ?? <span className="text-gray-400">—</span>}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                                                {ven.service_type ?? <span className="text-gray-400">—</span>}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                                                {ven.organization_name ?? <span className="text-gray-400">—</span>}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                                                {ven.phone ?? <span className="text-gray-400">—</span>}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                                                {new Date(ven.created_at).toLocaleDateString('en-GB', {
+                                                    day: 'numeric',
+                                                    month: 'short',
+                                                    year: 'numeric'
+                                                })}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                <div className="flex items-center justify-center gap-3">
+                                                    <button
+                                                        onClick={(e) => handleView(e, ven)}
+                                                        className="text-emerald-600 hover:text-emerald-800 transition-colors p-1 rounded hover:bg-emerald-50"
+                                                        title="View vendor"
+                                                    >
+                                                        <FiEye size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => handleEdit(e, ven)}
+                                                        className="text-indigo-600 hover:text-indigo-800 transition-colors p-1 rounded hover:bg-indigo-50"
+                                                        title="Edit vendor"
+                                                    >
+                                                        <FiEdit size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setShowDeleteDialog(ven)}
+                                                        className="text-rose-600 hover:text-rose-800 transition-colors p-1 rounded hover:bg-rose-50"
+                                                        title="Delete vendor"
+                                                    >
+                                                        <FiTrash2 size={18} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={7} className="py-16 text-center">
+                                            <div className="text-gray-500 text-sm">
+                                                No vendors found
+                                                {searchTerm && <p className="mt-1">Try adjusting your search term</p>}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                {/* Pagination */}
+                {/* PAGINATION */}
                 {totalPages > 0 && (
-                    <div className="flex justify-between items-center mt-4">
-                        <p className="text-sm text-gray-600">
-                            Showing {startIndex + 1} to {endIndex} of {totalCount}
-                        </p>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-sm text-gray-600">
+                        <div>
+                            Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{endIndex}</span>{' '}
+                            of <span className="font-medium">{totalCount}</span>
+                        </div>
 
                         <div className="flex gap-2">
-                            <button
-                                disabled={currentPage === 1}
-                                onClick={() => setCurrentPage((p) => p - 1)}
-                                className="px-3 py-2 border rounded-md"
-                            >
+                            <Button variant="outlined" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
                                 Previous
-                            </button>
-                            <button
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                size="sm"
                                 disabled={currentPage === totalPages}
                                 onClick={() => setCurrentPage((p) => p + 1)}
-                                className="px-3 py-2 border rounded-md"
                             >
                                 Next
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 )}

@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router';
 import InputField from '@/utils/components/ui/InputField';
 import Button from '@/utils/components/ui/Button';
 import Toast from '@/utils/toast';
+import ReactSelect from 'react-select';
 import { VendorByIdApi, VendorUpsertApi } from '@/api/VendorApi';
 import { Organization1DropdownApi } from '@/api/DropdownApi';
 
@@ -135,34 +136,41 @@ const VendorForm = () => {
                         {errors.service_type && <p className="mt-1 text-sm text-red-600">{errors.service_type.message}</p>}
                     </div>
 
-                    {/* Organization */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Organization <span className="text-red-500">*</span>
-                        </label>
-                        <Controller
-                            name="organization_id"
-                            control={control}
-                            rules={{ required: 'Organization is required' }}
-                            render={({ field }) => (
-                                <select
-                                    {...field}
-                                    disabled={orgLoading}
-                                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition ${
-                                        errors.organization_id ? 'border-red-500' : 'border-gray-300'
-                                    } ${orgLoading ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-                                >
-                                    <option value="">Select organization</option>
-                                    {organizations.map((org) => (
-                                        <option key={org.organization_id} value={String(org.organization_id)}>
-                                            {org.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            )}
-                        />
-                        {errors.organization_id && <p className="mt-1 text-sm text-red-600">{errors.organization_id.message}</p>}
-                    </div>
+                    {/* Organization Dropdown */}
+                    <Controller
+                        name="organization_id"
+                        control={control}
+                        rules={{ required: 'Organization is required' }}
+                        render={({ field }) => {
+                            const options = organizations.map((org) => ({
+                                value: org.organization_id,
+                                label: org.name
+                            }));
+
+                            return (
+                                <div>
+                                    <label className="text-sm font-medium">
+                                        Organization <span className="text-red-500">*</span>
+                                    </label>
+
+                                    <ReactSelect
+                                        options={options}
+                                        value={options.find((opt) => opt.value === field.value) || null}
+                                        onChange={(selected) => field.onChange(selected?.value)}
+                                        onBlur={field.onBlur}
+                                        isLoading={orgLoading}
+                                        placeholder="Select organization"
+                                        maxMenuHeight={180}
+                                        menuPlacement="auto"
+                                        closeMenuOnScroll={true}
+                                        menuShouldScrollIntoView={false}
+                                    />
+
+                                    {errors.organization_id && <p className="text-xs text-red-500">{errors.organization_id.message}</p>}
+                                </div>
+                            );
+                        }}
+                    />
 
                     {/* Email & Phone */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

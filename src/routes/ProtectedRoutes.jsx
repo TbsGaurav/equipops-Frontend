@@ -45,6 +45,7 @@ import EquipmentDetails from '@/views/Equipment/EquipmentDetails';
 import AuditLog from '@/views/AuditLog';
 import Permission from '@/views/Permission';
 import PermissionForm from '@/views/Permission/PermissionForm';
+import VendorView from '@/views/Vendor/VendorView';
 
 const ProtectedRoutes = [
     {
@@ -153,7 +154,8 @@ const ProtectedRoutes = [
                 children: [
                     { path: '', element: <Vendor /> },
                     { path: 'create', element: <VendorForm /> },
-                    { path: 'edit/:vendor_id', element: <VendorForm /> }
+                    { path: 'edit/:vendor_id', element: <VendorForm /> },
+                    { path: '/vendor/view/:vendor_id', element: <VendorView /> }
                 ]
             },
             {
