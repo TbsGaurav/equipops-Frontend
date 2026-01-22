@@ -1,7 +1,9 @@
 import { Fragment, useState } from 'react';
+import { FiEye } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
 import { RotatingLines } from 'react-loader-spinner';
 import Button from '@/utils/components/ui/Button';
+import { useNavigate } from 'react-router';
 import InputField from '@/utils/components/ui/InputField';
 import Alert from '@/utils/components/ui/Alert';
 import { AuditLogListApi } from '@/api/AuditLogApi';
@@ -13,6 +15,8 @@ const AuditLog = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [orderColumn, setOrderColumn] = useState('created_at');
     const [orderDirection, setOrderDirection] = useState('DESC');
+
+    const navigate = useNavigate();
 
     const params = {
         search: searchTerm,
@@ -34,6 +38,11 @@ const AuditLog = () => {
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalCount);
+
+    const handleView = (e, log) => {
+        e.stopPropagation();
+        navigate(`/AuditLog/view/${log.audit_id}`);
+    };
 
     return (
         <Fragment>
@@ -95,6 +104,7 @@ const AuditLog = () => {
                                 >
                                     Created {orderColumn === 'created_at' && (orderDirection === 'ASC' ? '↑' : '↓')}
                                 </th>
+                                <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
 
@@ -112,17 +122,54 @@ const AuditLog = () => {
                                         <td className="px-6 py-4 font-medium">{log.action}</td>
                                         <td className="px-6 py-4">{log.entity_id}</td>
                                         <td className="px-6 py-4 text-xs whitespace-pre-wrap max-w-xs">
-                                            {log.old_data ? JSON.stringify(JSON.parse(log.old_data), null, 2) : '-'}
+                                            {(() => {
+                                                try {
+                                                    return log.old_data
+                                                        ? JSON.stringify(
+                                                              typeof log.old_data === 'string' ? JSON.parse(log.old_data) : log.old_data,
+                                                              null,
+                                                              2
+                                                          )
+                                                        : '-';
+                                                } catch {
+                                                    return log.old_data || '-';
+                                                }
+                                            })()}
                                         </td>
+
                                         <td className="px-6 py-4 text-xs whitespace-pre-wrap max-w-xs">
-                                            {log.new_data ? JSON.stringify(JSON.parse(log.new_data), null, 2) : '-'}
+                                            {(() => {
+                                                try {
+                                                    return log.new_data
+                                                        ? JSON.stringify(
+                                                              typeof log.new_data === 'string' ? JSON.parse(log.new_data) : log.new_data,
+                                                              null,
+                                                              2
+                                                          )
+                                                        : '-';
+                                                } catch {
+                                                    return log.new_data || '-';
+                                                }
+                                            })()}
                                         </td>
+
                                         <td className="px-6 py-4">{new Date(log.created_at).toLocaleString()}</td>
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="flex justify-center gap-3">
+                                                <button
+                                                    onClick={(e) => handleView(e, log)}
+                                                    className="cursor-pointer text-green-600 hover:text-green-800"
+                                                    title="View AuditLog"
+                                                >
+                                                    <FiEye size={18} />
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={6} className="py-16 text-center text-gray-500">
+                                    <td colSpan={7} className="py-16 text-center text-gray-500">
                                         No audit logs found
                                     </td>
                                 </tr>

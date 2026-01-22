@@ -19,7 +19,7 @@ const VendorView = () => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <RotatingLines strokeColor="#6366f1" width="32" />
             </div>
         );
@@ -30,29 +30,35 @@ const VendorView = () => {
     }
 
     return (
-        <div className="min-h-screen bg-blue-50 flex items-center justify-center px-4 py-10">
-            <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Vendor Details</h1>
-                    <p className="mt-2 text-gray-500">View vendor information</p>
-                </div>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
+            <div className="w-full max-w-2xl">
+                <div className="bg-white shadow-lg rounded-2xl border border-gray-100 overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-indigo-500 px-5 py-4 sm:px-8">
+                        <h1 className="text-3xl font-bold text-white">Vendor Details</h1>
+                        <p className="mt-1 text-blue-100 text-sm">View vendor information</p>
+                    </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <ViewText label="Vendor Name" value={vendor?.name} />
-                    <ViewText label="Service Type" value={vendor?.service_type} />
-                    <ViewText label="Organization" value={vendor?.organization_name} />
-                    <ViewText label="Email" value={vendor?.email} />
-                    <ViewText label="Phone" value={vendor?.phone} />
-                    <ViewText label="Created At" value={formatDate(vendor?.created_at)} />
-                </div>
+                    {/* Main Content */}
+                    <div className="p-6 sm:p-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <ViewText label="Vendor Name" value={vendor?.name} />
+                            <ViewText label="Service Type" value={vendor?.service_type} />
+                            <ViewText label="Organization" value={vendor?.organization_name} />
+                            <ViewText label="Email" value={vendor?.email} />
+                            <ViewText label="Phone" value={vendor?.phone} />
+                            <ViewText label="Created At" value={formatDate(vendor?.created_at)} />
+                        </div>
 
-                <div className="mt-8 flex justify-center">
-                    <button
-                        onClick={() => navigate('/vendor')}
-                        className="px-6 py-2 border border-gray-300 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition"
-                    >
-                        Back
-                    </button>
+                        <div className="mt-8 flex justify-center">
+                            <button
+                                onClick={() => navigate('/vendor')}
+                                className="px-6 py-2 bg-gray-800 hover:bg-gray-900 text-white text-sm font-medium rounded-lg transition-all"
+                            >
+                                ← Back
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

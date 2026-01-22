@@ -50,6 +50,10 @@ import EquipmentCategoryView from '@/views/EquipmentCategory/EquipmentCategoryVi
 import EquipmentFailureView from '@/views/EquipmentFailure/EquipmentFailureView';
 import EquipmentSubpartView from '@/views/EquipmentSubpart/EquipmentSubpartView';
 import PermissionView from '@/views/Permission/PermissionView';
+import Role from '@/views/Role';
+import RoleForm from '@/views/Role/RoleForm';
+import RoleView from '@/views/Role/RoleView';
+import AuditLogView from '@/views/AuditLog/AuditLogView';
 
 const ProtectedRoutes = [
     {
@@ -192,9 +196,10 @@ const ProtectedRoutes = [
             {
                 path: 'auditlog',
                 children: [
-                    { path: '', element: <AuditLog /> }
+                    { path: '', element: <AuditLog /> },
                     // { path: 'create', element: <EquipmentSubpartForm /> },
-                    // { path: 'edit/:subpart_id', element: <EquipmentSubpartForm /> }
+                    // { path: 'edit/:subpart_id', element: <EquipmentSubpartForm /> },
+                    { path: '/auditlog/view/:audit_id', element: <AuditLogView /> }
                 ]
             },
             {
@@ -204,6 +209,15 @@ const ProtectedRoutes = [
                     { path: 'create', element: <PermissionForm /> },
                     { path: 'edit/:permission_id', element: <PermissionForm /> },
                     { path: '/permission/view/:permission_id', element: <PermissionView /> }
+                ]
+            },
+            {
+                path: 'role',
+                children: [
+                    { path: '', element: <Role /> },
+                    { path: 'create', element: <RoleForm /> },
+                    { path: 'edit/:role_id', element: <RoleForm /> },
+                    { path: '/role/view/:role_id', element: <RoleView /> }
                 ]
             },
             {

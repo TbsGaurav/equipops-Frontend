@@ -132,181 +132,165 @@ const EquipmentFailureForm = () => {
 
     /* ================= RENDER ================= */
     return (
-        <div className="min-h-screen bg-blue-50 flex items-center justify-center px-4 py-10">
-            <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">
-                        {isEdit ? 'Update Equipment Failure' : 'Create New Equipment Failure'}
-                    </h1>
-                    <p className="mt-2 text-gray-500">
-                        {isEdit ? 'Modify equipment failure information' : 'Add a new equipment failure to the system'}
-                    </p>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
+            <div className="w-full max-w-2xl">
+                <div className="bg-white shadow-lg rounded-2xl border border-gray-100 overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-indigo-500 px-5 py-4 sm:px-8 text-center">
+                        <h1 className="text-3xl font-bold text-white">
+                            {isEdit ? 'Update Equipment Failure' : 'Create New Equipment Failure'}
+                        </h1>
+                        <p className="mt-1 text-blue-100 text-sm">
+                            {isEdit ? 'Modify equipment failure information' : 'Add a new equipment failure to the system'}
+                        </p>
+                    </div>
+
+                    {/* Form Content */}
+                    <div className="p-6 sm:p-8">
+                        <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
+                            {/* FAILURE TYPE */}
+                            <div>
+                                <label className="text-sm font-medium">
+                                    Failure Type <span className="text-red-500">*</span>
+                                </label>
+                                <Controller
+                                    name="failure_type"
+                                    control={control}
+                                    rules={{
+                                        required: 'Failure Type is required',
+                                        maxLength: {
+                                            value: 50,
+                                            message: 'Failure Type cannot exceed 50 characters'
+                                        }
+                                    }}
+                                    render={({ field }) => (
+                                        <InputField {...field} error={!!errors.failure_type} placeholder="Enter Failure Type" />
+                                    )}
+                                />
+                                {errors.failure_type && <p className="text-xs text-red-500">{errors.failure_type.message}</p>}
+                            </div>
+
+                            {/* FAILURE DATE */}
+                            <div>
+                                <label className="text-sm font-medium">Failure Date</label>
+                                <Controller
+                                    name="failure_date"
+                                    control={control}
+                                    render={({ field }) => <InputField type="datetime-local" {...field} />}
+                                />
+                            </div>
+
+                            {/* Organization Dropdown */}
+                            <Controller
+                                name="organization_id"
+                                control={control}
+                                rules={{ required: 'Organization is required' }}
+                                render={({ field }) => {
+                                    const options = organizations.map((org) => ({ value: org.organization_id, label: org.name }));
+                                    return (
+                                        <div>
+                                            <label className="text-sm font-medium">
+                                                Organization <span className="text-red-500">*</span>
+                                            </label>
+                                            <ReactSelect
+                                                options={options}
+                                                value={options.find((opt) => opt.value === field.value) || null}
+                                                onChange={(selected) => field.onChange(selected?.value)}
+                                                onBlur={field.onBlur}
+                                                isLoading={orgLoading}
+                                                placeholder="Select organization"
+                                                maxMenuHeight={180}
+                                            />
+                                            {errors.organization_id && (
+                                                <p className="text-xs text-red-500">{errors.organization_id.message}</p>
+                                            )}
+                                        </div>
+                                    );
+                                }}
+                            />
+
+                            {/* Equipment Dropdown */}
+                            <Controller
+                                name="equipment_id"
+                                control={control}
+                                rules={{ required: 'Equipment is required' }}
+                                render={({ field }) => {
+                                    const options = equipments.map((eq) => ({ value: eq.equipment_id, label: eq.name }));
+                                    return (
+                                        <div>
+                                            <label className="text-sm font-medium">
+                                                Equipment <span className="text-red-500">*</span>
+                                            </label>
+                                            <ReactSelect
+                                                options={options}
+                                                value={options.find((opt) => opt.value === field.value) || null}
+                                                onChange={(selected) => field.onChange(selected?.value)}
+                                                onBlur={field.onBlur}
+                                                isLoading={eqLoading}
+                                                placeholder="Select Equipment"
+                                                maxMenuHeight={180}
+                                            />
+                                            {errors.equipment_id && <p className="text-xs text-red-500">{errors.equipment_id.message}</p>}
+                                        </div>
+                                    );
+                                }}
+                            />
+
+                            {/* Equipment Subpart Dropdown */}
+                            <Controller
+                                name="subpart_id"
+                                control={control}
+                                rules={{ required: 'Equipment Subpart is required' }}
+                                render={({ field }) => {
+                                    const options = equipmentsubparts.map((sub) => ({ value: sub.subpart_id, label: sub.name }));
+                                    return (
+                                        <div>
+                                            <label className="text-sm font-medium">
+                                                Equipment Subpart <span className="text-red-500">*</span>
+                                            </label>
+                                            <ReactSelect
+                                                options={options}
+                                                value={options.find((opt) => opt.value === field.value) || null}
+                                                onChange={(selected) => field.onChange(selected?.value)}
+                                                onBlur={field.onBlur}
+                                                isLoading={eqsubLoading}
+                                                placeholder="Select Subpart"
+                                                maxMenuHeight={180}
+                                            />
+                                            {errors.subpart_id && <p className="text-xs text-red-500">{errors.subpart_id.message}</p>}
+                                        </div>
+                                    );
+                                }}
+                            />
+
+                            {/* Downtime */}
+                            <div>
+                                <label className="text-sm font-medium">Downtime (minutes)</label>
+                                <Controller
+                                    name="downtime_minutes"
+                                    control={control}
+                                    render={({ field }) => <InputField type="number" {...field} />}
+                                />
+                            </div>
+
+                            {/* Description */}
+                            <div>
+                                <label className="text-sm font-medium">Description</label>
+                                <Controller name="description" control={control} render={({ field }) => <InputField {...field} />} />
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex justify-end gap-3 pt-4">
+                                <Button type="button" variant="outlined" onClick={() => navigate('/EquipmentFailure')}>
+                                    Cancel
+                                </Button>
+                                <Button type="submit" variant="contained" loading={mutation.isPending}>
+                                    {isEdit ? 'Update' : 'Create'}
+                                </Button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-
-                <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
-                    {/* FAILURE TYPE */}
-                    <div>
-                        <label className="text-sm font-medium">
-                            Failure Type <span className="text-red-500">*</span>
-                        </label>
-                        <Controller
-                            name="failure_type"
-                            control={control}
-                            rules={{
-                                required: 'Failure Type is required',
-                                maxLength: {
-                                    value: 50,
-                                    message: 'Failure Type cannot exceed 50 characters'
-                                }
-                            }}
-                            render={({ field }) => <InputField {...field} error={!!errors.failure_type} placeholder="Enter Failure Type" />}
-                        />
-                        {errors.failure_type && <p className="text-xs text-red-500">{errors.failure_type.message}</p>}
-                    </div>
-                    {/* FAILURE DATE */}
-                    <div>
-                        <label className="text-sm font-medium">
-                            Failure Date <span className="text-red-500"></span>
-                        </label>
-                        <Controller
-                            name="failure_date"
-                            control={control}
-                            render={({ field }) => <InputField type="datetime-local" {...field} placeholder="Enter Failure Date" />}
-                        />
-                    </div>
-                    {/* Organization Dropdown */}
-                    <Controller
-                        name="organization_id"
-                        control={control}
-                        rules={{ required: 'Organization is required' }}
-                        render={({ field }) => {
-                            const options = organizations.map((org) => ({
-                                value: org.organization_id,
-                                label: org.name
-                            }));
-
-                            return (
-                                <div>
-                                    <label className="text-sm font-medium">
-                                        Organization <span className="text-red-500">*</span>
-                                    </label>
-
-                                    <ReactSelect
-                                        options={options}
-                                        value={options.find((opt) => opt.value === field.value) || null}
-                                        onChange={(selected) => field.onChange(selected?.value)}
-                                        onBlur={field.onBlur}
-                                        isLoading={orgLoading}
-                                        placeholder="Select organization"
-                                        maxMenuHeight={180}
-                                        menuPlacement="auto"
-                                        closeMenuOnScroll={true}
-                                        menuShouldScrollIntoView={false}
-                                    />
-
-                                    {errors.organization_id && <p className="text-xs text-red-500">{errors.organization_id.message}</p>}
-                                </div>
-                            );
-                        }}
-                    />
-
-                    {/* Equipment Dropdown */}
-                    <Controller
-                        name="equipment_id"
-                        control={control}
-                        rules={{ required: 'Equipment is required' }}
-                        render={({ field }) => {
-                            const options = equipments.map((eq) => ({
-                                value: eq.equipment_id,
-                                label: eq.name
-                            }));
-
-                            return (
-                                <div>
-                                    <label className="text-sm font-medium">
-                                        Equipment <span className="text-red-500">*</span>
-                                    </label>
-
-                                    <ReactSelect
-                                        options={options}
-                                        value={options.find((opt) => opt.value === field.value) || null}
-                                        onChange={(selected) => field.onChange(selected?.value)}
-                                        onBlur={field.onBlur}
-                                        isLoading={eqLoading}
-                                        placeholder="Select Equipment"
-                                        maxMenuHeight={180}
-                                        menuPlacement="auto"
-                                        closeMenuOnScroll={true}
-                                        menuShouldScrollIntoView={false}
-                                    />
-
-                                    {errors.equipment_id && <p className="text-xs text-red-500">{errors.equipment_id.message}</p>}
-                                </div>
-                            );
-                        }}
-                    />
-
-                    {/* Equipment Subpart Dropdown */}
-                    <Controller
-                        name="subpart_id"
-                        control={control}
-                        rules={{ required: 'Equipment Subpart is required' }}
-                        render={({ field }) => {
-                            const options = equipmentsubparts.map((sub) => ({
-                                value: sub.subpart_id,
-                                label: sub.name
-                            }));
-
-                            return (
-                                <div>
-                                    <label className="text-sm font-medium">
-                                        Equipment Subpart <span className="text-red-500">*</span>
-                                    </label>
-
-                                    <ReactSelect
-                                        options={options}
-                                        value={options.find((opt) => opt.value === field.value) || null}
-                                        onChange={(selected) => field.onChange(selected?.value)}
-                                        onBlur={field.onBlur}
-                                        isLoading={eqsubLoading}
-                                        placeholder="Select Subpart"
-                                        maxMenuHeight={180}
-                                        menuPlacement="auto"
-                                        closeMenuOnScroll={true}
-                                        menuShouldScrollIntoView={false}
-                                    />
-
-                                    {errors.subpart_id && <p className="text-xs text-red-500">{errors.subpart_id.message}</p>}
-                                </div>
-                            );
-                        }}
-                    />
-
-                    {/* DOWNTIME */}
-                    <div>
-                        <label className="text-sm font-medium">Downtime (minutes)</label>
-                        <Controller
-                            name="downtime_minutes"
-                            control={control}
-                            render={({ field }) => <InputField type="number" {...field} />}
-                        />
-                    </div>
-                    {/* DESCRIPTION */}
-                    <div>
-                        <label className="text-sm font-medium">Description</label>
-                        <Controller name="description" control={control} render={({ field }) => <InputField {...field} />} />
-                    </div>
-                    {/* ACTIONS */}
-                    <div className="flex justify-end gap-3 pt-4">
-                        <Button type="button" variant="outlined" onClick={() => navigate('/EquipmentFailure')}>
-                            Cancel
-                        </Button>
-
-                        <Button type="submit" variant="contained" loading={mutation.isPending}>
-                            {isEdit ? 'Update' : 'Create'}
-                        </Button>
-                    </div>
-                </form>
             </div>
         </div>
     );

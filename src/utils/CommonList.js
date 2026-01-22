@@ -59,7 +59,8 @@ export const SideList = [
     { title: 'Equipment Subpart', key: 'Equipment Subpart', value: 'equipmentsubpart', Icon: LuPuzzle, module: 'EQUIPMENTSUBPART' },
     { title: 'Vendor', key: 'Vendor', value: 'vendor', Icon: LuUsers, module: 'VENDOR' },
     { title: 'Audit Log', key: 'Audit Log', value: 'auditlog', Icon: LuHistory, module: 'AUDITLOG' },
-    { title: 'Permission', key: 'Permission', value: 'permission', Icon: LuKey, module: 'PERMISSION' }
+    { title: 'Permission', key: 'Permission', value: 'permission', Icon: LuKey, module: 'PERMISSION' },
+    { title: 'Role', key: 'Role', value: 'role', Icon: LuUserCog, module: 'ROLE' }
     // { key: 'subscription', value: 'subscription', Icon: LuCrown }
     // { key: 'profile', value: 'profile', Icon: LuUser },
     // { key: 'logout', value: 'logout', Icon: LuLogOut }
