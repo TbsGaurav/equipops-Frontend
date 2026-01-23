@@ -78,7 +78,7 @@ const AuditLogView = () => {
                 {/* smaller width */}
                 <div className="bg-white shadow-lg rounded-2xl border border-gray-100 overflow-hidden">
                     {/* Header */}
-                    <div className="bg-indigo-600 px-5 py-4 sm:px-8">
+                    <div className="bg-indigo-600 px-5 py-4 sm:px-8 text-center">
                         <h1 className="text-xl sm:text-2xl font-bold text-white">Audit Log Details</h1>
                         <p className="mt-1 text-indigo-100 text-sm">Track changes • {auditLog?.entity_name || '—'}</p>
                     </div>

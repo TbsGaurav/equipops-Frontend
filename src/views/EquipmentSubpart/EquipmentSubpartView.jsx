@@ -4,6 +4,7 @@ import { RotatingLines } from 'react-loader-spinner';
 import PropTypes from 'prop-types';
 import Alert from '@/utils/components/ui/Alert';
 import { EquipmentSubpartByIdApi } from '@/api/EquipmentSubpartApi';
+import { QRCodeCanvas } from 'qrcode.react';
 
 const EquipmentSubpartView = () => {
     const { subpart_id } = useParams();
@@ -34,7 +35,7 @@ const EquipmentSubpartView = () => {
             <div className="w-full max-w-2xl">
                 <div className="bg-white shadow-lg rounded-2xl border border-gray-100 overflow-hidden">
                     {/* Header */}
-                    <div className="bg-indigo-500 px-5 py-4 sm:px-8">
+                    <div className="bg-indigo-500 px-5 py-4 sm:px-8 text-center">
                         <h1 className="text-3xl font-bold text-white">Equipment Subpart Details</h1>
                         <p className="mt-1 text-blue-100 text-sm">View equipment subpart information</p>
                     </div>
@@ -44,7 +45,20 @@ const EquipmentSubpartView = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <ViewText label="Subpart Name" value={sub?.subpart_name} />
                             <ViewText label="Equipment Name" value={sub?.equipment_name} />
-                            <ViewText label="QR Code" value={sub?.qr_code} />
+                            <ViewText
+                                label="QR Code"
+                                value={
+                                    <div className="flex flex-col items-start gap-2">
+                                        <QRCodeCanvas
+                                            value={`${window.location.origin}/EquipmentSubpart/view/${sub?.subpart_id}`}
+                                            size={120}
+                                        />
+                                        {/* <span className="text-xs text-gray-500 break-all">
+                                            {`${window.location.origin}/EquipmentSubpart/view/${sub?.subpart_id}`}
+                                        </span> */}
+                                    </div>
+                                }
+                            />{' '}
                             <ViewText label="Description" value={sub?.description} />
                             <ViewText
                                 label="Status"

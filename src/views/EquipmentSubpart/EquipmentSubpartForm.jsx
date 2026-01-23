@@ -28,8 +28,7 @@ const EquipmentSubpartForm = () => {
             equipment_id: '',
             subpart_name: '',
             description: '',
-            status: '',
-            qr_code: ''
+            status: null
         }
     });
 
@@ -61,8 +60,7 @@ const EquipmentSubpartForm = () => {
                 equipment_id: subpart.equipment_id,
                 subpart_name: subpart.subpart_name ?? '',
                 description: subpart.description ?? '',
-                status: subpart.status ? 'true' : 'false',
-                qr_code: subpart.qr_code ?? ''
+                status: subpart.status
             });
         }
     }, [data, reset]);
@@ -86,8 +84,7 @@ const EquipmentSubpartForm = () => {
             equipment_id: Number(formData.equipment_id),
             subpart_name: formData.subpart_name,
             description: formData.description,
-            status: formData.status === 'true',
-            qr_code: formData.qr_code
+            status: formData.status
         };
 
         mutation.mutate(payload);
@@ -164,18 +161,34 @@ const EquipmentSubpartForm = () => {
                                 );
                             }}
                         />
+                        {/* DESCRIPTION */}
+                        <div>
+                            <label className="text-sm font-medium">
+                                Description <span className="text-red-500">*</span>
+                            </label>
+                            <Controller
+                                name="description"
+                                control={control}
+                                render={({ field }) => (
+                                    <InputField {...field} error={!!errors.description} placeholder="Enter Description" />
+                                )}
+                            />
+                        </div>
 
                         {/* Status Dropdown */}
                         <Controller
                             name="status"
                             control={control}
-                            rules={{ required: 'Status is required' }}
+                            rules={{
+                                validate: (value) => (value !== null && value !== undefined) || 'Status is required'
+                            }}
                             render={({ field }) => {
                                 const options = [
                                     { value: true, label: 'Active' },
                                     { value: false, label: 'Inactive' }
                                 ];
-                                const selectedOption = options.find((opt) => opt.value === field.value) || null;
+
+                                const selectedOption = options.find((opt) => opt.value === field.value) ?? null;
 
                                 return (
                                     <div>
@@ -186,13 +199,10 @@ const EquipmentSubpartForm = () => {
                                         <ReactSelect
                                             options={options}
                                             value={selectedOption}
-                                            onChange={(selected) => field.onChange(selected?.value ?? null)}
+                                            onChange={(selected) => field.onChange(selected.value)}
                                             onBlur={field.onBlur}
                                             placeholder="Select Status"
                                             isClearable={false}
-                                            menuPlacement="auto"
-                                            closeMenuOnScroll
-                                            menuShouldScrollIntoView={false}
                                         />
 
                                         {errors.status && <p className="text-xs text-red-500">{errors.status.message}</p>}
@@ -200,12 +210,6 @@ const EquipmentSubpartForm = () => {
                                 );
                             }}
                         />
-
-                        {/* QR Code */}
-                        <div>
-                            <label className="text-sm font-medium">QR Code</label>
-                            <Controller name="qr_code" control={control} render={({ field }) => <InputField {...field} />} />
-                        </div>
 
                         {/* ACTIONS */}
                         <div className="flex justify-end gap-3 pt-4">
