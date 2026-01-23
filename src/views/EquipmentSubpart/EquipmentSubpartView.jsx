@@ -48,17 +48,30 @@ const EquipmentSubpartView = () => {
                             <ViewText
                                 label="QR Code"
                                 value={
-                                    <div className="flex flex-col items-start gap-2">
+                                    <div className="relative inline-block group">
+                                        {/* QR Code */}
                                         <QRCodeCanvas
-                                            value={`${window.location.origin}/EquipmentSubpart/view/${sub?.subpart_id}`}
+                                            value={`${window.location.origin}/DowntimeLog/create/${sub?.subpart_id}`}
                                             size={120}
                                         />
-                                        {/* <span className="text-xs text-gray-500 break-all">
-                                            {`${window.location.origin}/EquipmentSubpart/view/${sub?.subpart_id}`}
-                                        </span> */}
+
+                                        {/* Tooltip */}
+                                        <div
+                                            className="
+                                                       absolute bottom-full left-1/2 -translate-x-1/2 mb-2
+                                                       hidden group-hover:block
+                                                       whitespace-nowrap
+                                                       max-w-none
+                                                       bg-gray-900 text-white text-xs
+                                                       px-3 py-2 rounded-md shadow-lg
+                                                       z-50"
+                                        >
+                                            {`${window.location.origin}/DowntimeLog/create/${sub?.subpart_id}`}
+                                        </div>
                                     </div>
                                 }
-                            />{' '}
+                            />
+
                             <ViewText label="Description" value={sub?.description} />
                             <ViewText
                                 label="Status"
