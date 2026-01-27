@@ -54,7 +54,6 @@ export const SideList = [
     { title: 'EmailTemplate', key: 'email_template', value: 'email-template', Icon: LuMailPlus, module: 'EMAILTEMPLATE' },
     { title: 'MenuType', key: 'menu_type', value: 'menu-type', Icon: LuPanelLeft },
     { title: 'MenuPermission', key: 'menu_permission', value: 'menu-permission', Icon: LuListChecks },
-    { title: 'Equipment', key: 'equipment', value: 'equipment', Icon: LuListChecks, module: 'EQUIPMENT' },
     { title: 'Equipment Category', key: 'Equipment Category', value: 'equipmentcategory', Icon: LuLayers, module: 'EQUIPMENTCATEGORY' },
     { title: 'Equipment Failure', key: 'Equipment Failure', value: 'equipmentfailure', Icon: LuTriangleAlert, module: 'EQUIPMENTFAILURE' },
     { title: 'Equipment Subpart', key: 'Equipment Subpart', value: 'equipmentsubpart', Icon: LuPuzzle, module: 'EQUIPMENTSUBPART' },
