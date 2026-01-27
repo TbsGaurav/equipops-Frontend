@@ -25,7 +25,8 @@ const Sidebar = ({ open }) => {
         'EQUIPMENTSUBPART_VIEW',
         'AUDITLOG_VIEW',
         'PERMISSION_VIEW',
-        'ROLE_VIEW'
+        'ROLE_VIEW',
+        'DASHBOARDDATA_VIEW'
     ];
 
     const allowedMenus = SideList.filter((item) => canView(permissions, item.module));

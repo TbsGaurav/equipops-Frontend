@@ -60,7 +60,8 @@ export const SideList = [
     { title: 'Vendor', key: 'Vendor', value: 'vendor', Icon: LuUsers, module: 'VENDOR' },
     { title: 'Audit Log', key: 'Audit Log', value: 'auditlog', Icon: LuHistory, module: 'AUDITLOG' },
     { title: 'Permission', key: 'Permission', value: 'permission', Icon: LuKey, module: 'PERMISSION' },
-    { title: 'Role', key: 'Role', value: 'role', Icon: LuUserCog, module: 'ROLE' }
+    { title: 'Role', key: 'Role', value: 'role', Icon: LuUserCog, module: 'ROLE' },
+    { title: 'Dashboard Data', key: 'Dashboard Data', value: 'dashboarddata', Icon: LuLayoutDashboard, module: 'DASHBOARDDATA' }
     // { key: 'subscription', value: 'subscription', Icon: LuCrown }
     // { key: 'profile', value: 'profile', Icon: LuUser },
     // { key: 'logout', value: 'logout', Icon: LuLogOut }

@@ -54,6 +54,7 @@ import Role from '@/views/Role';
 import RoleForm from '@/views/Role/RoleForm';
 import RoleView from '@/views/Role/RoleView';
 import AuditLogView from '@/views/AuditLog/AuditLogView';
+import DashboardData from '@/views/DashboardData';
 
 const ProtectedRoutes = [
     {
@@ -218,6 +219,15 @@ const ProtectedRoutes = [
                     { path: 'create', element: <RoleForm /> },
                     { path: 'edit/:role_id', element: <RoleForm /> },
                     { path: '/role/view/:role_id', element: <RoleView /> }
+                ]
+            },
+            {
+                path: 'dashboarddata',
+                children: [
+                    { path: '', element: <DashboardData /> }
+                    //{ path: 'create', element: <DashboardDataForm /> }
+                    //{ path: 'edit/:dashboard_id', element: <DashboardDataForm /> },
+                    //{ path: '/dashboarddata/view/:dashboard_id', element: <DashboardDataView /> }
                 ]
             },
             {
