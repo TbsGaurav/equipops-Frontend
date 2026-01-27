@@ -56,6 +56,9 @@ import RoleView from '@/views/Role/RoleView';
 import AuditLogView from '@/views/AuditLog/AuditLogView';
 import DashboardData from '@/views/DashboardData';
 
+import DashboardCategoryIndex from '@/views/DashboardCategory/DashboardCategoryIndex';
+import DashboardCategoryForm from '@/views/DashboardCategory/DashboardCategoryForm';
+import DashboardCategoryDetails from '@/views/DashboardCategory/DashboardCategoryDetails';
 const ProtectedRoutes = [
     {
         element: (
@@ -230,6 +233,16 @@ const ProtectedRoutes = [
                     //{ path: '/dashboarddata/view/:dashboard_id', element: <DashboardDataView /> }
                 ]
             },
+            {
+                path: 'dashboard-category',
+                children: [
+                    { path: '', element: <DashboardCategoryIndex /> },
+                    { path: 'create', element: <DashboardCategoryForm /> },
+                    { path: 'edit/:id', element: <DashboardCategoryForm /> },
+                    { path: 'view/:id', element: <DashboardCategoryDetails /> }
+                ]
+            },
+
             {
                 path: 'organization/:orgId/users',
                 element: <OrganizationDetails />

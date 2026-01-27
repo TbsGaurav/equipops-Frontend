@@ -16,6 +16,7 @@ import {
     LuHistory,
     LuKey
 } from 'react-icons/lu';
+import { FiLayers } from 'react-icons/fi';
 
 export const CardBgColors = [
     'bg-teal-200/50',
@@ -61,7 +62,10 @@ export const SideList = [
     { title: 'Audit Log', key: 'Audit Log', value: 'auditlog', Icon: LuHistory, module: 'AUDITLOG' },
     { title: 'Permission', key: 'Permission', value: 'permission', Icon: LuKey, module: 'PERMISSION' },
     { title: 'Role', key: 'Role', value: 'role', Icon: LuUserCog, module: 'ROLE' },
-    { title: 'Dashboard Data', key: 'Dashboard Data', value: 'dashboarddata', Icon: LuLayoutDashboard, module: 'DASHBOARDDATA' }
+    { title: 'Dashboard Data', key: 'Dashboard Data', value: 'dashboarddata', Icon: LuLayoutDashboard, module: 'DASHBOARDDATA' },
+    { title: 'Equipment', key: 'EQUIPMENT', value: 'equipment', Icon: LuListChecks, module: 'EQUIPMENT' },
+    { title: 'Dashboard Category', key: 'DASHBOARD CATEGORY', value: 'dashboard-category', Icon: FiLayers, module: 'DASHBOARD_CATEGORY' }
+
     // { key: 'subscription', value: 'subscription', Icon: LuCrown }
     // { key: 'profile', value: 'profile', Icon: LuUser },
     // { key: 'logout', value: 'logout', Icon: LuLogOut }
