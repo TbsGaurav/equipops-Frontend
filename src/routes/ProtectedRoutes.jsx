@@ -33,10 +33,31 @@ import OrgListByStatus from '@/views/Organization/OrgListByStatus';
 import JobApplicationForm from '@/views/JobApplicationForm';
 import Equipment from '@/views/Equipment';
 import EquipmentForm from '@/views/Equipment/EquipmentForm';
+import Vendor from '@/views/Vendor';
+import EquipmentCategory from '@/views/EquipmentCategory';
+import EquipmentCategoryForm from '@/views/EquipmentCategory/EquipmentCategoryForm';
+import VendorForm from '@/views/Vendor/VendorForm';
+import EquipmentFailure from '@/views/EquipmentFailure';
+import EquipmentFailureForm from '@/views/EquipmentFailure/EquipmentFailureForm';
+import EquipmentSubpart from '@/views/EquipmentSubpart';
+import EquipmentSubpartForm from '@/views/EquipmentSubpart/EquipmentSubpartForm';
 import EquipmentDetails from '@/views/Equipment/EquipmentDetails';
 import DashboardCategoryIndex from '@/views/DashboardCategory/DashboardCategoryIndex';
 import DashboardCategoryForm from '@/views/DashboardCategory/DashboardCategoryForm';
 import DashboardCategoryDetails from '@/views/DashboardCategory/DashboardCategoryDetails';
+import AuditLog from '@/views/AuditLog';
+import Permission from '@/views/Permission';
+import PermissionForm from '@/views/Permission/PermissionForm';
+import VendorView from '@/views/Vendor/VendorView';
+import EquipmentCategoryView from '@/views/EquipmentCategory/EquipmentCategoryView';
+import EquipmentFailureView from '@/views/EquipmentFailure/EquipmentFailureView';
+import EquipmentSubpartView from '@/views/EquipmentSubpart/EquipmentSubpartView';
+import PermissionView from '@/views/Permission/PermissionView';
+import Role from '@/views/Role';
+import RoleForm from '@/views/Role/RoleForm';
+import RoleView from '@/views/Role/RoleView';
+import AuditLogView from '@/views/AuditLog/AuditLogView';
+
 const ProtectedRoutes = [
     {
         element: (
@@ -148,7 +169,69 @@ const ProtectedRoutes = [
                     { path: 'view/:id', element: <DashboardCategoryDetails /> }
                 ]
             },
-
+            {
+                path: 'vendor',
+                children: [
+                    { path: '', element: <Vendor /> },
+                    { path: 'create', element: <VendorForm /> },
+                    { path: 'edit/:vendor_id', element: <VendorForm /> },
+                    { path: '/vendor/view/:vendor_id', element: <VendorView /> }
+                ]
+            },
+            {
+                path: 'equipmentcategory',
+                children: [
+                    { path: '', element: <EquipmentCategory /> },
+                    { path: 'create', element: <EquipmentCategoryForm /> },
+                    { path: 'edit/:category_id', element: <EquipmentCategoryForm /> },
+                    { path: '/equipmentcategory/view/:category_id', element: <EquipmentCategoryView /> }
+                ]
+            },
+            {
+                path: 'equipmentfailure',
+                children: [
+                    { path: '', element: <EquipmentFailure /> },
+                    { path: 'create', element: <EquipmentFailureForm /> },
+                    { path: 'edit/:failure_id', element: <EquipmentFailureForm /> },
+                    { path: '/equipmentfailure/view/:failure_id', element: <EquipmentFailureView /> }
+                ]
+            },
+            {
+                path: 'equipmentsubpart',
+                children: [
+                    { path: '', element: <EquipmentSubpart /> },
+                    { path: 'create', element: <EquipmentSubpartForm /> },
+                    { path: 'edit/:subpart_id', element: <EquipmentSubpartForm /> },
+                    { path: '/equipmentsubpart/view/:subpart_id', element: <EquipmentSubpartView /> }
+                ]
+            },
+            {
+                path: 'auditlog',
+                children: [
+                    { path: '', element: <AuditLog /> },
+                    // { path: 'create', element: <EquipmentSubpartForm /> },
+                    // { path: 'edit/:subpart_id', element: <EquipmentSubpartForm /> },
+                    { path: '/auditlog/view/:audit_id', element: <AuditLogView /> }
+                ]
+            },
+            {
+                path: 'permission',
+                children: [
+                    { path: '', element: <Permission /> },
+                    { path: 'create', element: <PermissionForm /> },
+                    { path: 'edit/:permission_id', element: <PermissionForm /> },
+                    { path: '/permission/view/:permission_id', element: <PermissionView /> }
+                ]
+            },
+            {
+                path: 'role',
+                children: [
+                    { path: '', element: <Role /> },
+                    { path: 'create', element: <RoleForm /> },
+                    { path: 'edit/:role_id', element: <RoleForm /> },
+                    { path: '/role/view/:role_id', element: <RoleView /> }
+                ]
+            },
             {
                 path: 'organization/:orgId/users',
                 element: <OrganizationDetails />
