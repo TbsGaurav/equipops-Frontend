@@ -57,6 +57,9 @@ import Role from '@/views/Role';
 import RoleForm from '@/views/Role/RoleForm';
 import RoleView from '@/views/Role/RoleView';
 import AuditLogView from '@/views/AuditLog/AuditLogView';
+import SlaMetrics from '@/views/sla/SlaMetricsList';
+import SlaMetricsForm from '@/views/Sla/SlaMetricsForm';
+import SlaMetricsDetails from '@/views/Sla/SlaMetricsDetails';
 
 const ProtectedRoutes = [
     {
@@ -152,12 +155,21 @@ const ProtectedRoutes = [
                 ]
             },
             {
+                path: 'sla-metrics',
+                children: [
+                    { path: '', element: <SlaMetrics /> },
+                    { path: 'create', element: <SlaMetricsForm /> },
+                    { path: 'edit/:id', element: <SlaMetricsForm /> },
+                    { path: 'view/:id', element: <SlaMetricsDetails /> }
+                ]
+            },
+            {
                 path: 'equipment',
                 children: [
                     { path: '', element: <Equipment /> },
                     { path: 'create', element: <EquipmentForm /> },
                     { path: 'edit/:id', element: <EquipmentForm /> },
-                    { path: '/equipment/view/:id', element: <EquipmentDetails /> }
+                    { path: 'view/:id', element: <EquipmentDetails /> }
                 ]
             },
             {

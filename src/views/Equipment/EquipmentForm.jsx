@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-// import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router';
 import { FiCheck, FiPlus } from 'react-icons/fi';
@@ -8,9 +7,11 @@ import { FiCheck, FiPlus } from 'react-icons/fi';
 import InputField from '@/utils/components/ui/InputField';
 import Button from '@/utils/components/ui/Button';
 import Toast from '@/utils/toast';
-import { EquipmentByIdApi, EquipmentUpsertApi } from '@/api/EquipmentApi';
 
-/* ===== Hardcode (temporary) ===== */
+import { EquipmentByIdApi, EquipmentUpsertApi } from '@/api/EquipmentApi';
+import { Organization1DropdownApi1 } from '@/api/DropdownApi';
+
+/* ===== Hardcode Category (temporary) ===== */
 const CATEGORY_LIST = [
     { id: 1, name: 'MRI Machines' },
     { id: 2, name: 'CT Scanners' },
@@ -19,17 +20,20 @@ const CATEGORY_LIST = [
     { id: 5, name: 'Ultrasound Machines' }
 ];
 
-const ORG_MAP = {
-    1: 'FTP Solution'
-};
-
-const FIXED_ORG_ID = 1;
-
 const EquipmentForm = () => {
     const { id } = useParams();
     const isEdit = Boolean(id);
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+
+    /* ===== ORGANIZATION DROPDOWN ===== */
+    const { data: orgData = [], isLoading: orgLoading } = useQuery({
+        queryKey: ['organization-dropdown'],
+        queryFn: async () => {
+            const res = await Organization1DropdownApi1();
+            return res?.data || [];
+        }
+    });
 
     const {
         control,
@@ -39,7 +43,7 @@ const EquipmentForm = () => {
     } = useForm({
         defaultValues: {
             equipmentId: 0,
-            organizationId: FIXED_ORG_ID,
+            organizationId: '',
             categoryId: '',
             name: '',
             type: '',
@@ -49,6 +53,16 @@ const EquipmentForm = () => {
             status: 1
         }
     });
+
+    /* ===== AUTO SELECT FIRST ORGANIZATION ===== */
+    useEffect(() => {
+        if (!isEdit && orgData.length > 0) {
+            reset((prev) => ({
+                ...prev,
+                organizationId: ''
+            }));
+        }
+    }, [orgData, isEdit, reset]);
 
     /* ===== GET BY ID ===== */
     const { data, isFetching } = useQuery({
@@ -62,8 +76,8 @@ const EquipmentForm = () => {
         if (data) {
             reset({
                 equipmentId: data.EquipmentId,
-                organizationId: data.OrganizationId ?? FIXED_ORG_ID,
-                categoryId: data.CategoryId ? data.CategoryId.toString() : '',
+                organizationId: data.OrganizationId?.toString(),
+                categoryId: data.CategoryId?.toString() || '',
                 name: data.Name || '',
                 type: data.Type || '',
                 location: data.Location || '',
@@ -84,6 +98,7 @@ const EquipmentForm = () => {
         },
         onError: (err) => {
             const apiErrors = err?.response?.data?.errors || [err?.response?.data?.message] || ['Failed to save equipment'];
+
             apiErrors.forEach((e) => Toast.error(e));
         }
     });
@@ -91,7 +106,7 @@ const EquipmentForm = () => {
     const submitHandler = (formData) => {
         const payload = {
             equipmentId: formData.equipmentId || 0,
-            organizationId: FIXED_ORG_ID,
+            organizationId: Number(formData.organizationId),
             categoryId: Number(formData.categoryId),
             name: formData.name,
             type: formData.type || null,
@@ -104,7 +119,9 @@ const EquipmentForm = () => {
         mutation.mutate(payload);
     };
 
-    if (isFetching) return <div className="p-6 text-center">Loading equipment...</div>;
+    if (isFetching) {
+        return <div className="p-6 text-center">Loading equipment...</div>;
+    }
 
     return (
         <div className="flex-1 flex items-center justify-center rounded-xl bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 px-4 py-8">
@@ -121,13 +138,38 @@ const EquipmentForm = () => {
                     onSubmit={handleSubmit(submitHandler)}
                     className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 flex flex-col gap-5"
                 >
-                    {/* Organization (read-only) */}
+                    {/* Organization */}
                     <div>
-                        <label className="block text-xs font-semibold text-gray-600 mb-1">Organization</label>
-                        <InputField value={ORG_MAP[FIXED_ORG_ID]} disabled className="bg-gray-100 cursor-not-allowed" />
+                        <label className="block text-xs font-semibold text-gray-600 mb-1">
+                            Organization <span className="text-red-500">*</span>
+                        </label>
+                        <Controller
+                            name="organizationId"
+                            control={control}
+                            rules={{ required: 'Organization is required' }}
+                            render={({ field }) => (
+                                <>
+                                    <select
+                                        {...field}
+                                        disabled={orgLoading}
+                                        className={`w-full border rounded-lg px-3 py-2 bg-slate-50 outline-none
+                                        ${errors.organizationId ? 'border-red-500' : 'border-slate-300'}
+                                        focus:ring-2 focus:ring-indigo-400`}
+                                    >
+                                        <option value="">Select organization</option>
+                                        {orgData.map((o) => (
+                                            <option key={o.organization_id} value={o.organization_id}>
+                                                {o.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.organizationId && <p className="text-xs text-red-500 mt-1">{errors.organizationId.message}</p>}
+                                </>
+                            )}
+                        />
                     </div>
 
-                    {/* Category dropdown */}
+                    {/* Category */}
                     <div>
                         <label className="block text-xs font-semibold text-gray-600 mb-1">
                             Category <span className="text-red-500">*</span>
@@ -141,8 +183,8 @@ const EquipmentForm = () => {
                                     <select
                                         {...field}
                                         className={`w-full border rounded-lg px-3 py-2 bg-slate-50 outline-none
-                      ${errors.categoryId ? 'border-red-500' : 'border-slate-300'}
-                      focus:ring-2 focus:ring-indigo-400`}
+                                        ${errors.categoryId ? 'border-red-500' : 'border-slate-300'}
+                                        focus:ring-2 focus:ring-indigo-400`}
                                     >
                                         <option value="">Select category</option>
                                         {CATEGORY_LIST.map((c) => (
@@ -175,6 +217,7 @@ const EquipmentForm = () => {
                                 )}
                             />
                         </div>
+
                         <div>
                             <label className="block text-xs font-semibold text-gray-600 mb-1">Type</label>
                             <Controller name="type" control={control} render={({ field }) => <InputField {...field} />} />
@@ -187,13 +230,14 @@ const EquipmentForm = () => {
                             <label className="block text-xs font-semibold text-gray-600 mb-1">Location</label>
                             <Controller name="location" control={control} render={({ field }) => <InputField {...field} />} />
                         </div>
+
                         <div>
                             <label className="block text-xs font-semibold text-gray-600 mb-1">QR Code</label>
                             <Controller name="qrCode" control={control} render={({ field }) => <InputField {...field} />} />
                         </div>
                     </div>
 
-                    {/* Date & Status */}
+                    {/* Purchase Date & Status */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-semibold text-gray-600 mb-1">Purchase Date</label>
@@ -211,6 +255,7 @@ const EquipmentForm = () => {
                                 )}
                             />
                         </div>
+
                         <div>
                             <label className="block text-xs font-semibold text-gray-600 mb-1">Status</label>
                             <Controller
@@ -238,6 +283,7 @@ const EquipmentForm = () => {
                         >
                             Cancel
                         </button>
+
                         <Button type="submit" loading={mutation.isPending}>
                             {isEdit ? 'Update' : 'Create'}
                         </Button>
