@@ -54,28 +54,22 @@ export const SideList = [
     //{ title: 'EmailTemplate', key: 'email_template', value: 'email-template', Icon: LuMailPlus, module: 'EMAILTEMPLATE' },
     { title: 'MenuType', key: 'menu_type', value: 'menu-type', Icon: LuPanelLeft },
     { title: 'MenuPermission', key: 'menu_permission', value: 'menu-permission', Icon: LuListChecks },
-<<<<<<< HEAD
     { title: 'Equipment', key: 'EQUIPMENT', value: 'equipment', Icon: LuListChecks, module: 'EQUIPMENT' },
     { title: 'Dashboard Category', key: 'DASHBOARD CATEGORY', value: 'dashboard-category', Icon: FiLayers, module: 'DASHBOARD_CATEGORY' },
     { title: 'SLA Metrics', key: 'SLA METRICS', value: 'sla-metrics', Icon: FiLayers, module: 'SLA_METRICS' },
     //{ title: 'Equipment', key: 'equipment', value: 'equipment', Icon: LuListChecks, module: 'EQUIPMENT' },
-=======
->>>>>>> 53bd764a119b25cb38135ba2f6299928390734d0
     { title: 'Equipment Category', key: 'Equipment Category', value: 'equipmentcategory', Icon: LuLayers, module: 'EQUIPMENTCATEGORY' },
     { title: 'Equipment Failure', key: 'Equipment Failure', value: 'equipmentfailure', Icon: LuTriangleAlert, module: 'EQUIPMENTFAILURE' },
     { title: 'Equipment Subpart', key: 'Equipment Subpart', value: 'equipmentsubpart', Icon: LuPuzzle, module: 'EQUIPMENTSUBPART' },
     { title: 'Vendor', key: 'Vendor', value: 'vendor', Icon: LuUsers, module: 'VENDOR' },
     { title: 'Audit Log', key: 'Audit Log', value: 'auditlog', Icon: LuHistory, module: 'AUDITLOG' },
     { title: 'Permission', key: 'Permission', value: 'permission', Icon: LuKey, module: 'PERMISSION' },
-<<<<<<< HEAD
-    { title: 'Role', key: 'Role', value: 'role', Icon: LuUserCog, module: 'ROLE' }
-=======
+    { title: 'Role', key: 'Role', value: 'role', Icon: LuUserCog, module: 'ROLE' },
     { title: 'Role', key: 'Role', value: 'role', Icon: LuUserCog, module: 'ROLE' },
     { title: 'Dashboard Data', key: 'Dashboard Data', value: 'dashboarddata', Icon: LuLayoutDashboard, module: 'DASHBOARDDATA' },
     { title: 'Equipment', key: 'EQUIPMENT', value: 'equipment', Icon: LuListChecks, module: 'EQUIPMENT' },
     { title: 'Dashboard Category', key: 'DASHBOARD CATEGORY', value: 'dashboard-category', Icon: FiLayers, module: 'DASHBOARD_CATEGORY' }
 
->>>>>>> 53bd764a119b25cb38135ba2f6299928390734d0
     // { key: 'subscription', value: 'subscription', Icon: LuCrown }
     // { key: 'profile', value: 'profile', Icon: LuUser },
     // { key: 'logout', value: 'logout', Icon: LuLogOut }
