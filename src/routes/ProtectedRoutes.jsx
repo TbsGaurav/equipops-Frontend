@@ -61,6 +61,11 @@ import SlaMetrics from '@/views/sla/SlaMetricsList';
 import SlaMetricsForm from '@/views/Sla/SlaMetricsForm';
 import SlaMetricsDetails from '@/views/Sla/SlaMetricsDetails';
 
+import DashboardData from '@/views/DashboardData';
+
+// import DashboardCategoryIndex from '@/views/DashboardCategory/DashboardCategoryIndex';
+// import DashboardCategoryForm from '@/views/DashboardCategory/DashboardCategoryForm';
+// import DashboardCategoryDetails from '@/views/DashboardCategory/DashboardCategoryDetails';
 const ProtectedRoutes = [
     {
         element: (
@@ -244,6 +249,25 @@ const ProtectedRoutes = [
                     { path: '/role/view/:role_id', element: <RoleView /> }
                 ]
             },
+            {
+                path: 'dashboarddata',
+                children: [
+                    { path: '', element: <DashboardData /> }
+                    //{ path: 'create', element: <DashboardDataForm /> }
+                    //{ path: 'edit/:dashboard_id', element: <DashboardDataForm /> },
+                    //{ path: '/dashboarddata/view/:dashboard_id', element: <DashboardDataView /> }
+                ]
+            },
+            {
+                path: 'dashboard-category',
+                children: [
+                    { path: '', element: <DashboardCategoryIndex /> },
+                    { path: 'create', element: <DashboardCategoryForm /> },
+                    { path: 'edit/:id', element: <DashboardCategoryForm /> },
+                    { path: 'view/:id', element: <DashboardCategoryDetails /> }
+                ]
+            },
+
             {
                 path: 'organization/:orgId/users',
                 element: <OrganizationDetails />

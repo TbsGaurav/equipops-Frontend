@@ -163,9 +163,7 @@ const EquipmentSubpartForm = () => {
                         />
                         {/* DESCRIPTION */}
                         <div>
-                            <label className="text-sm font-medium">
-                                Description <span className="text-red-500">*</span>
-                            </label>
+                            <label className="text-sm font-medium">Description</label>
                             <Controller
                                 name="description"
                                 control={control}

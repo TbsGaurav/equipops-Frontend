@@ -16,8 +16,11 @@ const Sidebar = ({ open }) => {
     // const topItems = SideList;
     // const bottomItems = SideList.slice(4);
     let permissions = useSelector((state) => state.user.permissions);
+<<<<<<< HEAD
     permissions = Array.from(new Set([...permissions, 'EQUIPMENT_VIEW', 'DASHBOARD_CATEGORY_VIEW', 'SLA_METRICS_VIEW']));
     // temp fix for sidebar view
+=======
+>>>>>>> 53bd764a119b25cb38135ba2f6299928390734d0
     permissions = [
         ...permissions,
         'EQUIPMENT_VIEW',
@@ -27,8 +30,28 @@ const Sidebar = ({ open }) => {
         'EQUIPMENTSUBPART_VIEW',
         'AUDITLOG_VIEW',
         'PERMISSION_VIEW',
-        'ROLE_VIEW'
+        'ROLE_VIEW',
+        'DASHBOARDDATA_VIEW',
+        'DASHBOARD_CATEGORY_VIEW'
     ];
+<<<<<<< HEAD
+=======
+    permissions = Array.from(
+        new Set([
+            ...permissions,
+            'EQUIPMENT_VIEW',
+            'VENDOR_VIEW',
+            'EQUIPMENTCATEGORY_VIEW',
+            'EQUIPMENTFAILURE_VIEW',
+            'AUDITLOG_VIEW',
+            'PERMISSION_VIEW',
+            'ROLE_VIEW',
+            'DASHBOARDDATA_VIEW',
+            'DASHBOARD_CATEGORY_VIEW'
+        ])
+    );
+    // temp fix for sidebar view
+>>>>>>> 53bd764a119b25cb38135ba2f6299928390734d0
 
     const allowedMenus = SideList.filter((item) => canView(permissions, item.module));
 
