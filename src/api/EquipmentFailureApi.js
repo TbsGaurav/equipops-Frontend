@@ -1,17 +1,53 @@
-import ApiService from '@/utils/services/ApiService';
+import axios from 'axios';
 
-export const EquipmentFailureListApi = async (data) => {
-    return await ApiService.get('/EquipmentFailure/EquipmentFailureList', data, { authorization: false });
-};
+const env = import.meta.env;
 
-export const EquipmentFailureDeleteApi = async (data) => {
-    return await ApiService.post('/EquipmentFailure/EquipmentFailureDelete', data, { authorization: false });
+/****************************************************************************************************************
+ *                                         Equipment Failure                                                      *
+ ****************************************************************************************************************/
+
+export const EquipmentFailureListApi = async (params) => {
+    try {
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/EquipmentFailure/EquipmentFailureList', { params });
+        return response.data;
+    } catch (error) {
+        console.error('EquipmentFailureListApi error', error);
+        throw error;
+    }
 };
 
 export const EquipmentFailureByIdApi = async (failure_id) => {
-    return ApiService.get('/EquipmentFailure/EquipmentFailureById', { failure_id }, { authorization: false });
+    try {
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/EquipmentFailure/EquipmentFailureById', { params: { failure_id } });
+        return response.data;
+    } catch (error) {
+        console.error('EquipmentFailureByIdApi error', error);
+        throw error;
+    }
 };
 
-export const EquipmentFailureUpsertApi = async (data) => {
-    return await ApiService.post('/EquipmentFailure/EquipmentFailureCreateUpdate', data, { authorization: false });
+export const EquipmentFailureUpsertApi = async (payload) => {
+    try {
+        const response = await axios.post(env.VITE_TEMP_API_URL + '/EquipmentFailure/EquipmentFailureCreateUpdate', payload, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('EquipmentFailureUpsertApi error', error);
+        throw error;
+    }
+};
+
+export const EquipmentFailureDeleteApi = async (failure_id) => {
+    try {
+        const response = await axios.post(env.VITE_TEMP_API_URL + '/EquipmentFailure/EquipmentFailureDelete', null, {
+            params: { failure_id }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('EquipmentFailureDeleteApi error', error);
+        throw error;
+    }
 };

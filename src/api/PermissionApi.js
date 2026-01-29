@@ -1,16 +1,51 @@
-import ApiService from '@/utils/services/ApiService';
+import axios from 'axios';
 
-export const PermissionListApi = async (data) => {
-    return await ApiService.get('/Permission/permissionList', data, { authorization: false });
-};
+const env = import.meta.env;
 
-export const PermissionDeleteApi = async (data) => {
-    return await ApiService.post('/Permission/permissionDelete', data, { authorization: false });
+/****************************************************************************************************************
+ *                                         Permission                                                            *
+ ****************************************************************************************************************/
+
+export const PermissionListApi = async (params) => {
+    try {
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/Permission/permissionList', { params });
+        return response.data;
+    } catch (error) {
+        console.error('PermissionListApi error', error);
+        throw error;
+    }
 };
 
 export const PermissionByIdApi = async (permission_id) => {
-    return ApiService.get('/Permission/permissionById', { permission_id }, { authorization: false });
+    try {
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/Permission/permissionById', { params: { permission_id } });
+        return response.data;
+    } catch (error) {
+        console.error('PermissionByIdApi error', error);
+        throw error;
+    }
 };
-export const PermissionUpsertApi = async (data) => {
-    return await ApiService.post('/Permission/permissionCreateUpdate', data, { authorization: false });
+
+export const PermissionUpsertApi = async (payload) => {
+    try {
+        const response = await axios.post(env.VITE_TEMP_API_URL + '/Permission/permissionCreateUpdate', payload, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('PermissionUpsertApi error', error);
+        throw error;
+    }
+};
+
+export const PermissionDeleteApi = async (permission_id) => {
+    try {
+        const response = await axios.post(env.VITE_TEMP_API_URL + '/Permission/permissionDelete', null, { params: { permission_id } });
+        return response.data;
+    } catch (error) {
+        console.error('PermissionDeleteApi error', error);
+        throw error;
+    }
 };

@@ -1,9 +1,27 @@
-import ApiService from '@/utils/services/ApiService';
+import axios from 'axios';
 
-export const AuditLogListApi = async (data) => {
-    return await ApiService.get('/AuditLog/auditLogList', data, { authorization: false });
+const env = import.meta.env;
+
+/****************************************************************************************************************
+ *                                         Audit Log                                                             *
+ ****************************************************************************************************************/
+
+export const AuditLogListApi = async (params) => {
+    try {
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/AuditLog/auditLogList', { params });
+        return response.data;
+    } catch (error) {
+        console.error('AuditLogListApi error', error);
+        throw error;
+    }
 };
 
 export const AuditLogByIdApi = async (audit_id) => {
-    return ApiService.get('/AuditLog/auditLogById', { audit_id }, { authorization: false });
+    try {
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/AuditLog/auditLogById', { params: { audit_id } });
+        return response.data;
+    } catch (error) {
+        console.error('AuditLogByIdApi error', error);
+        throw error;
+    }
 };

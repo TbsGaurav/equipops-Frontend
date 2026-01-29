@@ -1,17 +1,53 @@
-import ApiService from '@/utils/services/ApiService';
+import axios from 'axios';
 
-export const EquipmentSubpartListApi = async (data) => {
-    return await ApiService.get('/EquipmentSubpart/equipmentsubpartList', data, { authorization: false });
-};
+const env = import.meta.env;
 
-export const EquipmentSubpartDeleteApi = async (data) => {
-    return await ApiService.post('/EquipmentSubpart/equipmentsubpartDelete', data, { authorization: false });
+/****************************************************************************************************************
+ *                                         Equipment Subpart                                                      *
+ ****************************************************************************************************************/
+
+export const EquipmentSubpartListApi = async (params) => {
+    try {
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/EquipmentSubpart/equipmentsubpartList', { params });
+        return response.data;
+    } catch (error) {
+        console.error('EquipmentSubpartListApi error', error);
+        throw error;
+    }
 };
 
 export const EquipmentSubpartByIdApi = async (subpart_id) => {
-    return ApiService.get('/EquipmentSubpart/equipmentsubpartById', { subpart_id }, { authorization: false });
+    try {
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/EquipmentSubpart/equipmentsubpartById', { params: { subpart_id } });
+        return response.data;
+    } catch (error) {
+        console.error('EquipmentSubpartByIdApi error', error);
+        throw error;
+    }
 };
 
-export const EquipmentSubpartUpsertApi = async (data) => {
-    return await ApiService.post('/EquipmentSubpart/equipmentsubpartCreateUpdate', data, { authorization: false });
+export const EquipmentSubpartUpsertApi = async (payload) => {
+    try {
+        const response = await axios.post(env.VITE_TEMP_API_URL + '/EquipmentSubpart/equipmentsubpartCreateUpdate', payload, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('EquipmentSubpartUpsertApi error', error);
+        throw error;
+    }
+};
+
+export const EquipmentSubpartDeleteApi = async (subpart_id) => {
+    try {
+        const response = await axios.post(env.VITE_TEMP_API_URL + '/EquipmentSubpart/equipmentsubpartDelete', null, {
+            params: { subpart_id }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('EquipmentSubpartDeleteApi error', error);
+        throw error;
+    }
 };

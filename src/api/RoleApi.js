@@ -1,17 +1,51 @@
-import ApiService from '@/utils/services/ApiService';
+import axios from 'axios';
 
-export const RoleListApi = async (data) => {
-    return await ApiService.get('/Role/roleList', data, { authorization: false });
-};
+const env = import.meta.env;
 
-export const RoleDeleteApi = async (data) => {
-    return await ApiService.post('/Role/roleDelete', data, { authorization: false });
+/****************************************************************************************************************
+ *                                         Role                                                                  *
+ ****************************************************************************************************************/
+
+export const RoleListApi = async (params) => {
+    try {
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/Role/roleList', { params });
+        return response.data;
+    } catch (error) {
+        console.error('RoleListApi error', error);
+        throw error;
+    }
 };
 
 export const RoleByIdApi = async (role_id) => {
-    return ApiService.get('/Role/roleById', { role_id }, { authorization: false });
+    try {
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/Role/roleById', { params: { role_id } });
+        return response.data;
+    } catch (error) {
+        console.error('RoleByIdApi error', error);
+        throw error;
+    }
 };
 
-export const RoleUpsertApi = async (data) => {
-    return await ApiService.post('/Role/roleCreateUpdate', data, { authorization: false });
+export const RoleUpsertApi = async (payload) => {
+    try {
+        const response = await axios.post(env.VITE_TEMP_API_URL + '/Role/roleCreateUpdate', payload, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('RoleUpsertApi error', error);
+        throw error;
+    }
+};
+
+export const RoleDeleteApi = async (role_id) => {
+    try {
+        const response = await axios.post(env.VITE_TEMP_API_URL + '/Role/roleDelete', null, { params: { role_id } });
+        return response.data;
+    } catch (error) {
+        console.error('RoleDeleteApi error', error);
+        throw error;
+    }
 };

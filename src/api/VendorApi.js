@@ -1,17 +1,51 @@
-import ApiService from '@/utils/services/ApiService';
+import axios from 'axios';
 
-export const VendorListApi = async (data) => {
-    return await ApiService.get('/Vendor/vendorList', data, { authorization: false });
-};
+const env = import.meta.env;
 
-export const VendorDeleteApi = async (data) => {
-    return await ApiService.post('/Vendor/vendorDelete', data, { authorization: false });
+/****************************************************************************************************************
+ *                                         Vendor                                                                *
+ ****************************************************************************************************************/
+
+export const VendorListApi = async (params) => {
+    try {
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/Vendor/vendorList', { params });
+        return response.data;
+    } catch (error) {
+        console.error('VendorListApi error', error);
+        throw error;
+    }
 };
 
 export const VendorByIdApi = async (vendor_id) => {
-    return ApiService.get('/Vendor/vendorById', { vendor_id }, { authorization: false });
+    try {
+        const response = await axios.get(env.VITE_TEMP_API_URL + '/Vendor/vendorById', { params: { vendor_id } });
+        return response.data;
+    } catch (error) {
+        console.error('VendorByIdApi error', error);
+        throw error;
+    }
 };
 
-export const VendorUpsertApi = async (data) => {
-    return await ApiService.post('/Vendor/vendorCreateUpdate', data, { authorization: false });
+export const VendorUpsertApi = async (payload) => {
+    try {
+        const response = await axios.post(env.VITE_TEMP_API_URL + '/Vendor/vendorCreateUpdate', payload, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('VendorUpsertApi error', error);
+        throw error;
+    }
+};
+
+export const VendorDeleteApi = async (vendor_id) => {
+    try {
+        const response = await axios.post(env.VITE_TEMP_API_URL + '/Vendor/vendorDelete', null, { params: { vendor_id } });
+        return response.data;
+    } catch (error) {
+        console.error('VendorDeleteApi error', error);
+        throw error;
+    }
 };
