@@ -6,11 +6,14 @@ import Toast from '@/utils/toast';
 import Button from '@/utils/components/ui/Button';
 import InputField from '@/utils/components/ui/InputField';
 import Alert from '@/utils/components/ui/Alert';
+import { canView, canUpdate } from '@/utils/Utils';
+import { useSelector } from 'react-redux';
 import { DashboardDataListApi, DashboardRebuildApi, DashboardAggregateApi, DashboardKpiSummaryApi } from '@/api/DashboardDataApi';
 
 const ITEMS_PER_PAGE = 10;
 
 const DashboardData = () => {
+    const permissions = useSelector((state) => state.user.permissions);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [sortColumn, setSortColumn] = useState('created_at');
@@ -45,6 +48,7 @@ const DashboardData = () => {
 
     const { data: kpiData, isLoading: kpiLoading } = useQuery({
         queryKey: ['dashboard-kpis'],
+        enabled: canView(permissions, 'DASHBOARD'),
         queryFn: () => DashboardKpiSummaryApi({ organization_id: 1 })
     });
 
@@ -71,9 +75,7 @@ const DashboardData = () => {
     const refreshMetricsMutation = useMutation({
         mutationFn: () =>
             DashboardRebuildApi({
-                organization_id: 1,
-                downtime_category_id: 1,
-                workorder_category_id: 2
+                organization_id: 1
             }),
         onSuccess: () => {
             Toast.success('Metrics refreshed successfully');
@@ -106,44 +108,46 @@ const DashboardData = () => {
                         <p className="mt-1 text-sm text-gray-600">Aggregated downtime and work order insights</p>
                     </div>
 
-                    <div className="flex gap-3">
-                        <Button
-                            variant="outlined"
-                            loading={refreshMetricsMutation.isPending}
-                            className="rounded-full"
-                            onClick={() => refreshMetricsMutation.mutate()}
-                        >
-                            Refresh Metrics
-                        </Button>
+                    {canUpdate(permissions, 'DASHBOARD') && (
+                        <div className="flex gap-3">
+                            <Button
+                                variant="outlined"
+                                loading={refreshMetricsMutation.isPending}
+                                className="rounded-full"
+                                onClick={() => refreshMetricsMutation.mutate()}
+                            >
+                                Refresh Metrics
+                            </Button>
 
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            className="rounded-full"
-                            onClick={() =>
-                                rebuildDashboardMutation.mutate({
-                                    organization_id: 1,
-                                    downtime_category_id: 1,
-                                    workorder_category_id: 2
-                                })
-                            }
-                        >
-                            Rebuild Dashboard
-                        </Button>
-                    </div>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                className="rounded-full"
+                                onClick={() =>
+                                    rebuildDashboardMutation.mutate({
+                                        organization_id: 1
+                                    })
+                                }
+                            >
+                                Rebuild Dashboard
+                            </Button>
+                        </div>
+                    )}
                 </div>
 
                 {/* ---------- KPI SECTION ---------- */}
-                <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-2xl p-6">
-                    {kpiLoading && <div className="mb-3 text-sm text-gray-400 animate-pulse">Loading KPIs…</div>}
+                {canView(permissions, 'DASHBOARD') && (
+                    <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-2xl p-6">
+                        {kpiLoading && <div className="mb-3 text-sm text-gray-400 animate-pulse">Loading KPIs…</div>}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <KpiCard title="Total Downtime (min)" value={kpis.totalDowntime} color="rose" />
-                        <KpiCard title="Total Failures" value={kpis.totalFailures} color="amber" />
-                        <KpiCard title="Total Work Orders" value={kpis.totalWorkOrders} color="indigo" />
-                        <KpiCard title="Total Records" value={kpis.totalRecords} color="emerald" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <KpiCard title="Total Downtime (min)" value={kpis.totalDowntime} color="rose" />
+                            <KpiCard title="Total Failures" value={kpis.totalFailures} color="amber" />
+                            <KpiCard title="Total Work Orders" value={kpis.totalWorkOrders} color="indigo" />
+                            <KpiCard title="Total Records" value={kpis.totalRecords} color="emerald" />
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* ---------- SEARCH ---------- */}
                 <div className="bg-white/70 backdrop-blur border border-gray-200 rounded-2xl shadow-sm p-4">

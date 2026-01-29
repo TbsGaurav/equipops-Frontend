@@ -9,9 +9,9 @@ export const DashboardDataListApi = async (params) => {
 };
 
 export const DashboardRebuildApi = async (payload) => {
-    return ApiService.post('/DashboardData/rebuild', payload, { autFhorization: false });
+    return ApiService.post('/DashboardData/rebuild', payload, { authorization: false });
 };
 
 export const DashboardKpiSummaryApi = async (payload) => {
-    return ApiService.post('/DashboardData/KPISummary', payload, { autFhorization: false });
+    return ApiService.post('/DashboardData/KPISummary', payload, { authorization: false });
 };
