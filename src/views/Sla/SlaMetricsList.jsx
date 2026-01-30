@@ -12,7 +12,7 @@ import Toast from '@/utils/toast';
 
 import { SlaMetricsListApi, SlaMetricsDeleteApi } from '@/api/SlaMetricsApi';
 
-import { Organization1DropdownApi1, EquipmentDropdownApi1 } from '@/api/DropdownApi';
+import { Organization1DropdownApi, EquipmentDropdownApi } from '@/api/DropdownApi';
 import { useDebounce } from '@/hooks/useDebounce';
 
 const SlaMetrics = () => {
@@ -63,14 +63,14 @@ const SlaMetrics = () => {
     const { data: orgData = [] } = useQuery({
         queryKey: ['organization-dropdown'],
         queryFn: async () => {
-            const res = await Organization1DropdownApi1();
+            const res = await Organization1DropdownApi();
             return res?.data || [];
         }
     });
     const { data: equipmentData = [] } = useQuery({
         queryKey: ['equipment-dropdown'],
         queryFn: async () => {
-            const res = await EquipmentDropdownApi1();
+            const res = await EquipmentDropdownApi();
             return res?.data || [];
         }
     });

@@ -11,7 +11,7 @@ import DeleteAlertDialog from '@/utils/components/ui/DeleteAlertDialog';
 import Toast from '@/utils/toast';
 
 import { DashboardCategoryListApi, DashboardCategoryDeleteApi } from '@/api/DashboardCategoryApi';
-import { Organization1DropdownApi1 } from '@/api/DropdownApi';
+import { Organization1DropdownApi } from '@/api/DropdownApi';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -47,7 +47,7 @@ const DashboardCategoryIndex = () => {
     const { data: orgData = [] } = useQuery({
         queryKey: ['organization-dropdown'],
         queryFn: async () => {
-            const res = await Organization1DropdownApi1();
+            const res = await Organization1DropdownApi();
             return res?.data || [];
         }
     });

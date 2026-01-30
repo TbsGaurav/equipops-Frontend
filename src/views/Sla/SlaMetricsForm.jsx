@@ -9,7 +9,7 @@ import Button from '@/utils/components/ui/Button';
 import Toast from '@/utils/toast';
 
 import { SlaMetricsByIdApi, SlaMetricsUpsertApi } from '@/api/SlaMetricsApi';
-import { Organization1DropdownApi1, EquipmentDropdownApi1, EquipmentSubpartDropdown } from '@/api/DropdownApi';
+import { Organization1DropdownApi, EquipmentDropdownApi, EquipmentSubpartDropdownApi } from '@/api/DropdownApi';
 
 const SlaMetricsForm = () => {
     const { id } = useParams();
@@ -20,17 +20,17 @@ const SlaMetricsForm = () => {
     /* ===== DROPDOWNS ===== */
     const { data: orgData = [] } = useQuery({
         queryKey: ['organization-dropdown'],
-        queryFn: async () => (await Organization1DropdownApi1())?.data || []
+        queryFn: async () => (await Organization1DropdownApi())?.data || []
     });
 
     const { data: equipmentData = [] } = useQuery({
         queryKey: ['equipment-dropdown'],
-        queryFn: async () => (await EquipmentDropdownApi1())?.data || []
+        queryFn: async () => (await EquipmentDropdownApi())?.data || []
     });
 
     const { data: equipmentSubpartData = [] } = useQuery({
         queryKey: ['equipment-subpart-dropdown'],
-        queryFn: async () => (await EquipmentSubpartDropdown())?.data || []
+        queryFn: async () => (await EquipmentSubpartDropdownApi())?.data || []
     });
 
     const {

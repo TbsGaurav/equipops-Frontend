@@ -9,7 +9,7 @@ import Button from '@/utils/components/ui/Button';
 import Toast from '@/utils/toast';
 
 import { EquipmentByIdApi, EquipmentUpsertApi } from '@/api/EquipmentApi';
-import { Organization1DropdownApi1 } from '@/api/DropdownApi';
+import { Organization1DropdownApi } from '@/api/DropdownApi';
 
 /* ===== Hardcode Category (temporary) ===== */
 const CATEGORY_LIST = [
@@ -30,7 +30,7 @@ const EquipmentForm = () => {
     const { data: orgData = [], isLoading: orgLoading } = useQuery({
         queryKey: ['organization-dropdown'],
         queryFn: async () => {
-            const res = await Organization1DropdownApi1();
+            const res = await Organization1DropdownApi();
             return res?.data || [];
         }
     });

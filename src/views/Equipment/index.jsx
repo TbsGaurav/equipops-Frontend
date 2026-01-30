@@ -11,7 +11,7 @@ import DeleteAlertDialog from '@/utils/components/ui/DeleteAlertDialog';
 import Toast from '@/utils/toast';
 
 import { EquipmentApiUrl, EquipmentDeleteApi } from '@/api/EquipmentApi';
-import { Organization1DropdownApi1 } from '@/api/DropdownApi';
+import { Organization1DropdownApi } from '@/api/DropdownApi';
 
 /* ===== Category stays hardcoded ===== */
 const CATEGORY_MAP = {
@@ -60,7 +60,7 @@ const Equipment = () => {
     const { data: orgData = [] } = useQuery({
         queryKey: ['organization-dropdown'],
         queryFn: async () => {
-            const res = await Organization1DropdownApi1();
+            const res = await Organization1DropdownApi();
             return res?.data || [];
         }
     });

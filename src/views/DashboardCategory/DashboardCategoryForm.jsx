@@ -9,7 +9,7 @@ import Button from '@/utils/components/ui/Button';
 import Toast from '@/utils/toast';
 
 import { DashboardCategoryByIdApi, DashboardCategoryUpsertApi } from '@/api/DashboardCategoryApi';
-import { Organization1DropdownApi1 } from '@/api/DropdownApi';
+import { Organization1DropdownApi } from '@/api/DropdownApi';
 
 const DashboardCategoryForm = () => {
     const { id } = useParams();
@@ -21,7 +21,7 @@ const DashboardCategoryForm = () => {
     const { data: orgData = [], isLoading: orgLoading } = useQuery({
         queryKey: ['organization-dropdown'],
         queryFn: async () => {
-            const res = await Organization1DropdownApi1();
+            const res = await Organization1DropdownApi();
             return res?.data || [];
         }
     });

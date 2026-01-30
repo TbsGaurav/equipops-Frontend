@@ -8,7 +8,7 @@ import Button from '@/utils/components/ui/Button';
 import Alert from '@/utils/components/ui/Alert';
 
 import { SlaMetricsByIdApi } from '@/api/SlaMetricsApi';
-import { Organization1DropdownApi1, EquipmentDropdownApi1 } from '@/api/DropdownApi';
+import { Organization1DropdownApi, EquipmentDropdownApi } from '@/api/DropdownApi';
 
 /* ===== SLA Metrics Details ===== */
 
@@ -28,7 +28,7 @@ const SlaMetricsDetails = () => {
     /* ===== ORGANIZATION DROPDOWN (FOR NAME MAPPING) ===== */
     const { data: orgData = [] } = useQuery({
         queryKey: ['organization-dropdown'],
-        queryFn: async () => (await Organization1DropdownApi1())?.data || []
+        queryFn: async () => (await Organization1DropdownApi())?.data || []
     });
 
     const orgMap = {};
@@ -39,7 +39,7 @@ const SlaMetricsDetails = () => {
     /* ===== EQUIPMENT DROPDOWN (FOR NAME MAPPING) ===== */
     const { data: equipmentData = [] } = useQuery({
         queryKey: ['equipment-dropdown'],
-        queryFn: async () => (await EquipmentDropdownApi1())?.data || []
+        queryFn: async () => (await EquipmentDropdownApi())?.data || []
     });
 
     const equipmentMap = {};
