@@ -5,7 +5,6 @@ const env = import.meta.env;
 /****************************************************************************************************************
  *                                         Dropdown APIs                                                          *
  ****************************************************************************************************************/
-
 export const Organization1DropdownApi = async () => {
     try {
         const response = await axios.get(env.VITE_TEMP_API_URL + '/OrganizationController1/organization/dropdown');

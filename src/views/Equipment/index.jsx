@@ -11,8 +11,9 @@ import DeleteAlertDialog from '@/utils/components/ui/DeleteAlertDialog';
 import Toast from '@/utils/toast';
 
 import { EquipmentApiUrl, EquipmentDeleteApi } from '@/api/EquipmentApi';
+import { Organization1DropdownApi1 } from '@/api/DropdownApi';
 
-/* ===== Hardcode (temporary) ===== */
+/* ===== Category stays hardcoded ===== */
 const CATEGORY_MAP = {
     1: 'MRI Machines',
     2: 'CT Scanners',
@@ -20,7 +21,6 @@ const CATEGORY_MAP = {
     4: 'Ventilators',
     5: 'Ultrasound Machines'
 };
-const ORG_MAP = { 1: 'FTP Solution' };
 
 const Equipment = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -33,6 +33,7 @@ const Equipment = () => {
     const navigate = useNavigate();
     const itemsPerPage = 10;
 
+    /* ===================== LIST API ===================== */
     const params = {
         Search: searchTerm || null,
         isActive: statusFilter,
@@ -55,6 +56,21 @@ const Equipment = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = Math.min(startIndex + itemsPerPage, totalCount);
 
+    /* ===================== ORGANIZATION (DYNAMIC) ===================== */
+    const { data: orgData = [] } = useQuery({
+        queryKey: ['organization-dropdown'],
+        queryFn: async () => {
+            const res = await Organization1DropdownApi1();
+            return res?.data || [];
+        }
+    });
+
+    const orgMap = {};
+    orgData.forEach((o) => {
+        orgMap[o.organization_id] = o.name;
+    });
+
+    /* ===================== DELETE ===================== */
     const deleteMutation = useMutation({
         mutationFn: EquipmentDeleteApi,
         onSuccess: () => {
@@ -68,7 +84,7 @@ const Equipment = () => {
     });
 
     const handleDelete = () => {
-        deleteMutation.mutate(showDeleteDialog.EquipmentId);
+        deleteMutation.mutate(showDeleteDialog.equipment_id);
     };
 
     return (
@@ -89,35 +105,18 @@ const Equipment = () => {
                 {/* Search + Filter */}
                 <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col gap-4">
                     <div className="flex flex-col sm:flex-row gap-3">
-                        {/* Search */}
                         <div className="flex-1">
                             <label className="block text-xs font-semibold text-gray-500 mb-1">Search</label>
-                            <div className="flex items-center gap-2">
-                                <InputField
-                                    placeholder="Search by name, QR code or location"
-                                    value={searchTerm}
-                                    onChange={(e) => {
-                                        setSearchTerm(e.target.value);
-                                        setCurrentPage(1);
-                                    }}
-                                    className="w-full h-10 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-dark/40"
-                                />
-                                {searchTerm && (
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setSearchTerm('');
-                                            setCurrentPage(1);
-                                        }}
-                                        className="text-sm px-4 py-2.5 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
-                                    >
-                                        Clear
-                                    </button>
-                                )}
-                            </div>
+                            <InputField
+                                placeholder="Search by name, QR code or location"
+                                value={searchTerm}
+                                onChange={(e) => {
+                                    setSearchTerm(e.target.value);
+                                    setCurrentPage(1);
+                                }}
+                            />
                         </div>
 
-                        {/* Status */}
                         <div className="w-full sm:w-48">
                             <label className="block text-xs font-semibold text-gray-500 mb-1">Status</label>
                             <select
@@ -126,8 +125,7 @@ const Equipment = () => {
                                     setStatusFilter(Number(e.target.value));
                                     setCurrentPage(1);
                                 }}
-                                className="w-full h-10 px-3 text-sm border border-gray-300 rounded-md bg-white
-                   focus:outline-none focus:ring-2 focus:ring-primary-dark/40"
+                                className="w-full h-10 px-3 text-sm border border-gray-300 rounded-md"
                             >
                                 <option value={-1}>All Status</option>
                                 <option value={1}>Active</option>
@@ -137,7 +135,7 @@ const Equipment = () => {
                     </div>
                 </div>
 
-                {isError && <Alert.Error>{error?.response?.data?.message || error?.message || 'Failed to load categories'}</Alert.Error>}
+                {isError && <Alert.Error>{error?.response?.data?.message || error?.message || 'Failed to load equipments'}</Alert.Error>}
 
                 {/* Table */}
                 <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
@@ -153,8 +151,9 @@ const Equipment = () => {
                                     }}
                                     className="p-3 text-left font-semibold cursor-pointer"
                                 >
-                                    Name {orderColumn === 'name' && (orderDirection === 'ASC' ? '↑' : '↓')}
-                                </th>
+                                    {' '}
+                                    Name {orderColumn === 'name' && (orderDirection === 'ASC' ? '↑' : '↓')}{' '}
+                                </th>{' '}
                                 <th className="p-3 text-left font-semibold">Type</th>
                                 <th className="p-3 text-left font-semibold">Location</th>
                                 <th className="p-3 text-left font-semibold">Purchase Date</th>
@@ -173,8 +172,8 @@ const Equipment = () => {
                             ) : equipments.length > 0 ? (
                                 equipments.map((eq) => (
                                     <tr key={eq.equipment_id} className="border-b border-gray-100 hover:bg-gray-50">
-                                        <td className="p-3">{ORG_MAP[eq.organization_id] || eq.organization_id}</td>
-                                        <td className="p-3">{CATEGORY_MAP[eq.category_id] || eq.category_id}</td>
+                                        <td className="p-3">{orgMap[eq.organization_id] || '-'}</td>
+                                        <td className="p-3">{CATEGORY_MAP[eq.category_id] || '-'}</td>
                                         <td className="p-3 font-medium">{eq.name}</td>
                                         <td className="p-3">{eq.type ?? '-'}</td>
                                         <td className="p-3">{eq.location ?? '-'}</td>
@@ -241,7 +240,7 @@ const Equipment = () => {
             </div>
 
             <DeleteAlertDialog
-                itemName={showDeleteDialog?.Name}
+                itemName={showDeleteDialog?.name}
                 isOpen={Boolean(showDeleteDialog)}
                 onCancel={() => setShowDeleteDialog(null)}
                 onConfirm={handleDelete}

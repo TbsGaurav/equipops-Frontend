@@ -16,6 +16,8 @@ const Sidebar = ({ open }) => {
     // const topItems = SideList;
     // const bottomItems = SideList.slice(4);
     let permissions = useSelector((state) => state.user.permissions);
+    permissions = Array.from(new Set([...permissions, 'EQUIPMENT_VIEW', 'DASHBOARD_CATEGORY_VIEW', 'SLA_METRICS_VIEW']));
+    // temp fix for sidebar view
     permissions = [
         ...permissions,
         'EQUIPMENT_VIEW',
